@@ -59,7 +59,6 @@
       },
 
 
-          
       "admin": {
         "Admin": {
          "!type": "fn(db: +Object) -> fn()",
@@ -396,12 +395,12 @@
            "!doc": "\n\nFetch all collections for the current db."
           },
           "eval": {
-           "!type": "fn(code: ?, parameters?: +Object, options?: +Object, callback: fn())",
+           "!type": "fn(code: +code.Code, parameters?: +Object, options?: +Object, callback: fn())",
            "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/db.html#eval",
            "!doc": "\n\nEvaluate javascript on the server"
           },
           "dereference": {
-           "!type": "fn(dbRef: ?, callback: fn())",
+           "!type": "fn(dbRef: +db_ref.DBRef, callback: fn())",
            "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/db.html#dereference",
            "!doc": "\n\nDereference a dbref, against a db"
           },
@@ -945,8 +944,565 @@
           }
          }
         }
+       },
+       "objectid": {
+        "ObjectID": {
+         "!type": "fn(id: string) -> +Object",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html",
+         "!doc": "\n\nCreate a new ObjectID instance",
+         "prototype": {
+          "toHexString": {
+           "!type": "fn() -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#toHexString",
+           "!doc": "\n\nReturn the ObjectID id as a 24 byte hex string representation"
+          },
+          "equals": {
+           "!type": "fn(otherID: +Object) -> ?",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#equals",
+           "!doc": "\n\nCompares the equality of this ObjectID with <code>otherID</code>."
+          },
+          "getTimestamp": {
+           "!type": "fn() -> ?",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#getTimestamp",
+           "!doc": "\n\nReturns the generation date (accurate up to the second) that this ID was generated."
+          }
+         },
+         "createFromTime": {
+          "!type": "fn(time: number) -> +objectid.ObjectID",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#createFromTime",
+          "!doc": "\n\nCreates an ObjectID from a second based number, with the rest of the ObjectID zeroed out. Used for comparisons or sorting the ObjectID."
+         },
+         "createFromHexString": {
+          "!type": "fn(hexString: string) -> +objectid.ObjectID",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#createFromHexString",
+          "!doc": "\n\nCreates an ObjectID from a hex string representation of an ObjectID."
+         },
+         "isValid": {
+          "!type": "fn() -> bool",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#isValid",
+          "!doc": "\n\nChecks if a value is a valid bson ObjectId"
+         }
+        }
+       },
+       "binary": {
+        "Binary": {
+         "!type": "fn(buffer: ?, subType?: number) -> +grid.Grid",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html",
+         "!doc": "\n\nA class representation of the BSON Binary type.",
+         "prototype": {
+          "put": {
+           "!type": "fn(byte_value: ?)",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html#put",
+           "!doc": "\n\nUpdates this binary with byte_value."
+          },
+          "write": {
+           "!type": "fn(string: string, offset: number)",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html#write",
+           "!doc": "\n\nWrites a buffer or string to the binary."
+          },
+          "read": {
+           "!type": "fn(position: number, length: number) -> ?",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html#read",
+           "!doc": "\n\nReads **length** bytes starting at **position**."
+          },
+          "value": {
+           "!type": "fn() -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html#value",
+           "!doc": "\n\nReturns the value of this binary as a string."
+          },
+          "length": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html#length",
+           "!doc": "\n\nLength."
+          }
+         }
+        }
+       },
+       "code": {
+        "Code": {
+         "!type": "fn(code: string, scope?: +Object) -> +code.Code",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/code.html",
+         "!doc": "\n\nA class representation of the BSON Code type."
+        }
+       },
+       "db_ref": {
+        "DBRef": {
+         "!type": "fn(namespace: string, oid: +objectid.ObjectID, db?: string) -> +db_ref.DBRef",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/db_ref.html",
+         "!doc": "\n\nA class representation of the BSON DBRef type."
+        }
+       },
+       "double": {
+        "Double": {
+         "!type": "fn(value: number) -> +double.Double",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/double.html",
+         "!doc": "\n\nA class representation of the BSON Double type.",
+         "prototype": {
+          "valueOf": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/double.html#valueOf",
+           "!doc": "\n\nAccess the number value."
+          }
+         }
+        }
+       },
+       "minkey": {
+        "MinKey": {
+         "!type": "fn() -> +minkey.MinKey",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/minkey.html",
+         "!doc": "\n\nA class representation of the BSON MinKey type."
+        }
+       },
+       "maxkey": {
+        "MaxKey": {
+         "!type": "fn() -> +maxkey.MaxKey",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/maxkey.html",
+         "!doc": "\n\nA class representation of the BSON MaxKey type."
+        }
+       },
+       "symbol": {
+        "Symbol": {
+         "!type": "fn(value: string) -> +symbol.Symbol",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/symbol.html",
+         "!doc": "\n\nA class representation of the BSON Symbol type.",
+         "prototype": {
+          "valueOf": {
+           "!type": "fn() -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/symbol.html#valueOf",
+           "!doc": "\n\nAccess the wrapped string value."
+          }
+         }
+        }
+       },
+       "timestamp": {
+        "Timestamp": {
+         "!type": "fn(low: number, high: number)",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html",
+         "!doc": "\n\nDefines a Timestamp class for representing a 64-bit two's-complement\ninteger value, which faithfully simulates the behavior of a Java \"Timestamp\". This\nimplementation is derived from TimestampLib in GWT.",
+         "prototype": {
+          "toInt": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#toInt",
+           "!doc": "\n\nReturn the int value."
+          },
+          "toNumber": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#toNumber",
+           "!doc": "\n\nReturn the Number value."
+          },
+          "toJSON": {
+           "!type": "fn() -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#toJSON",
+           "!doc": "\n\nReturn the JSON value."
+          },
+          "toString": {
+           "!type": "fn(opt_radix?: number) -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#toString",
+           "!doc": "\n\nReturn the String value."
+          },
+          "getHighBits": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#getHighBits",
+           "!doc": "\n\nReturn the high 32-bits value."
+          },
+          "getLowBits": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#getLowBits",
+           "!doc": "\n\nReturn the low 32-bits value."
+          },
+          "getLowBitsUnsigned": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#getLowBitsUnsigned",
+           "!doc": "\n\nReturn the low unsigned 32-bits value."
+          },
+          "getNumBitsAbs": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#getNumBitsAbs",
+           "!doc": "\n\nReturns the number of bits needed to represent the absolute value of this Timestamp."
+          },
+          "isZero": {
+           "!type": "fn() -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#isZero",
+           "!doc": "\n\nReturn whether this value is zero."
+          },
+          "isNegative": {
+           "!type": "fn() -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#isNegative",
+           "!doc": "\n\nReturn whether this value is negative."
+          },
+          "isOdd": {
+           "!type": "fn() -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#isOdd",
+           "!doc": "\n\nReturn whether this value is odd."
+          },
+          "equals": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#equals",
+           "!doc": "\n\nReturn whether this Timestamp equals the other"
+          },
+          "notEquals": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#notEquals",
+           "!doc": "\n\nReturn whether this Timestamp does not equal the other."
+          },
+          "lessThan": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#lessThan",
+           "!doc": "\n\nReturn whether this Timestamp is less than the other."
+          },
+          "lessThanOrEqual": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#lessThanOrEqual",
+           "!doc": "\n\nReturn whether this Timestamp is less than or equal to the other."
+          },
+          "greaterThan": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#greaterThan",
+           "!doc": "\n\nReturn whether this Timestamp is greater than the other."
+          },
+          "greaterThanOrEqual": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#greaterThanOrEqual",
+           "!doc": "\n\nReturn whether this Timestamp is greater than or equal to the other."
+          },
+          "compare": {
+           "!type": "fn(other: +timestamp.Timestamp) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#compare",
+           "!doc": "\n\nCompares this Timestamp with the given one."
+          },
+          "negate": {
+           "!type": "fn() -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#negate",
+           "!doc": "\n\nThe negation of this value."
+          },
+          "add": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#add",
+           "!doc": "\n\nReturns the sum of this and the given Timestamp."
+          },
+          "subtract": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#subtract",
+           "!doc": "\n\nReturns the difference of this and the given Timestamp."
+          },
+          "multiply": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#multiply",
+           "!doc": "\n\nReturns the product of this and the given Timestamp."
+          },
+          "div": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#div",
+           "!doc": "\n\nReturns this Timestamp divided by the given one."
+          },
+          "modulo": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#modulo",
+           "!doc": "\n\nReturns this Timestamp modulo the given one."
+          },
+          "not": {
+           "!type": "fn() -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#not",
+           "!doc": "\n\nThe bitwise-NOT of this value."
+          },
+          "and": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#and",
+           "!doc": "\n\nReturns the bitwise-AND of this Timestamp and the given one."
+          },
+          "or": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#or",
+           "!doc": "\n\nReturns the bitwise-OR of this Timestamp and the given one."
+          },
+          "xor": {
+           "!type": "fn(other: +timestamp.Timestamp) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#xor",
+           "!doc": "\n\nReturns the bitwise-XOR of this Timestamp and the given one."
+          },
+          "shiftLeft": {
+           "!type": "fn(numBits: number) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#shiftLeft",
+           "!doc": "\n\nReturns this Timestamp with bits shifted to the left by the given amount."
+          },
+          "shiftRight": {
+           "!type": "fn(numBits: number) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#shiftRight",
+           "!doc": "\n\nReturns this Timestamp with bits shifted to the right by the given amount."
+          },
+          "shiftRightUnsigned": {
+           "!type": "fn(numBits: number) -> +timestamp.Timestamp",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#shiftRightUnsigned",
+           "!doc": "\n\nReturns this Timestamp with bits shifted to the right by the given amount, with the new top bits matching the current sign bit."
+          }
+         },
+         "fromInt": {
+          "!type": "fn(value: number) -> +timestamp.Timestamp",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#fromInt",
+          "!doc": "\n\nReturns a Timestamp representing the given (32-bit) integer value."
+         },
+         "fromNumber": {
+          "!type": "fn(value: number) -> +timestamp.Timestamp",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#fromNumber",
+          "!doc": "\n\nReturns a Timestamp representing the given value, provided that it is a finite number. Otherwise, zero is returned."
+         },
+         "fromBits": {
+          "!type": "fn(lowBits: number, highBits: number) -> +timestamp.Timestamp",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#fromBits",
+          "!doc": "\n\nReturns a Timestamp representing the 64-bit integer that comes by concatenating the given high and low bits. Each is assumed to use 32 bits."
+         },
+         "fromString": {
+          "!type": "fn(str: string, opt_radix: number) -> +timestamp.Timestamp",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#fromString",
+          "!doc": "\n\nReturns a Timestamp representation of the given string, written using the given radix."
+         }
+        }
+       },
+       "long": {
+        "Long": {
+         "!type": "fn(low: number, high: number)",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html",
+         "!doc": "\n\nDefines a Long class for representing a 64-bit two's-complement\ninteger value, which faithfully simulates the behavior of a Java \"Long\". This\nimplementation is derived from LongLib in GWT.",
+         "prototype": {
+          "toInt": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#toInt",
+           "!doc": "\n\nReturn the int value."
+          },
+          "toNumber": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#toNumber",
+           "!doc": "\n\nReturn the Number value."
+          },
+          "toJSON": {
+           "!type": "fn() -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#toJSON",
+           "!doc": "\n\nReturn the JSON value."
+          },
+          "toString": {
+           "!type": "fn(opt_radix?: number) -> string",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#toString",
+           "!doc": "\n\nReturn the String value."
+          },
+          "getHighBits": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#getHighBits",
+           "!doc": "\n\nReturn the high 32-bits value."
+          },
+          "getLowBits": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#getLowBits",
+           "!doc": "\n\nReturn the low 32-bits value."
+          },
+          "getLowBitsUnsigned": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#getLowBitsUnsigned",
+           "!doc": "\n\nReturn the low unsigned 32-bits value."
+          },
+          "getNumBitsAbs": {
+           "!type": "fn() -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#getNumBitsAbs",
+           "!doc": "\n\nReturns the number of bits needed to represent the absolute value of this Long."
+          },
+          "isZero": {
+           "!type": "fn() -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#isZero",
+           "!doc": "\n\nReturn whether this value is zero."
+          },
+          "isNegative": {
+           "!type": "fn() -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#isNegative",
+           "!doc": "\n\nReturn whether this value is negative."
+          },
+          "isOdd": {
+           "!type": "fn() -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#isOdd",
+           "!doc": "\n\nReturn whether this value is odd."
+          },
+          "equals": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#equals",
+           "!doc": "\n\nReturn whether this Long equals the other"
+          },
+          "notEquals": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#notEquals",
+           "!doc": "\n\nReturn whether this Long does not equal the other."
+          },
+          "lessThan": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#lessThan",
+           "!doc": "\n\nReturn whether this Long is less than the other."
+          },
+          "lessThanOrEqual": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#lessThanOrEqual",
+           "!doc": "\n\nReturn whether this Long is less than or equal to the other."
+          },
+          "greaterThan": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#greaterThan",
+           "!doc": "\n\nReturn whether this Long is greater than the other."
+          },
+          "greaterThanOrEqual": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#greaterThanOrEqual",
+           "!doc": "\n\nReturn whether this Long is greater than or equal to the other."
+          },
+          "compare": {
+           "!type": "fn(other: +long.Long) -> bool",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#compare",
+           "!doc": "\n\nCompares this Long with the given one."
+          },
+          "negate": {
+           "!type": "fn() -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#negate",
+           "!doc": "\n\nThe negation of this value."
+          },
+          "add": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#add",
+           "!doc": "\n\nReturns the sum of this and the given Long."
+          },
+          "subtract": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#subtract",
+           "!doc": "\n\nReturns the difference of this and the given Long."
+          },
+          "multiply": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#multiply",
+           "!doc": "\n\nReturns the product of this and the given Long."
+          },
+          "div": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#div",
+           "!doc": "\n\nReturns this Long divided by the given one."
+          },
+          "modulo": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#modulo",
+           "!doc": "\n\nReturns this Long modulo the given one."
+          },
+          "not": {
+           "!type": "fn() -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#not",
+           "!doc": "\n\nThe bitwise-NOT of this value."
+          },
+          "and": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#and",
+           "!doc": "\n\nReturns the bitwise-AND of this Long and the given one."
+          },
+          "or": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#or",
+           "!doc": "\n\nReturns the bitwise-OR of this Long and the given one."
+          },
+          "xor": {
+           "!type": "fn(other: +long.Long) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#xor",
+           "!doc": "\n\nReturns the bitwise-XOR of this Long and the given one."
+          },
+          "shiftLeft": {
+           "!type": "fn(numBits: number) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#shiftLeft",
+           "!doc": "\n\nReturns this Long with bits shifted to the left by the given amount."
+          },
+          "shiftRight": {
+           "!type": "fn(numBits: number) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#shiftRight",
+           "!doc": "\n\nReturns this Long with bits shifted to the right by the given amount."
+          },
+          "shiftRightUnsigned": {
+           "!type": "fn(numBits: number) -> +long.Long",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#shiftRightUnsigned",
+           "!doc": "\n\nReturns this Long with bits shifted to the right by the given amount, with the new top bits matching the current sign bit."
+          }
+         },
+         "fromInt": {
+          "!type": "fn(value: number) -> +long.Long",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#fromInt",
+          "!doc": "\n\nReturns a Long representing the given (32-bit) integer value."
+         },
+         "fromNumber": {
+          "!type": "fn(value: number) -> +long.Long",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#fromNumber",
+          "!doc": "\n\nReturns a Long representing the given value, provided that it is a finite number. Otherwise, zero is returned."
+         },
+         "fromBits": {
+          "!type": "fn(lowBits: number, highBits: number) -> +long.Long",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#fromBits",
+          "!doc": "\n\nReturns a Long representing the 64-bit integer that comes by concatenating the given high and low bits. Each is assumed to use 32 bits."
+         },
+         "fromString": {
+          "!type": "fn(str: string, opt_radix: number) -> +long.Long",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#fromString",
+          "!doc": "\n\nReturns a Long representation of the given string, written using the given radix."
+         }
+        }
+       },
+       "bson": {
+        "BSON": {
+         "!type": "fn() -> +bson.BSON",
+         "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html",
+         "!doc": "\n\nCreate a new BSON instance",
+         "calculateObjectSize": {
+          "!type": "fn(object: +Object, serializeFunctions?: bool) -> number",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#calculateObjectSize",
+          "!doc": "\n\nCalculate the bson size for a passed in Javascript object."
+         },
+         "serializeWithBufferAndIndex": {
+          "!type": "fn(object: +Object, checkKeys: bool, buffer: ?, index: number, serializeFunctions: bool) -> number",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#serializeWithBufferAndIndex",
+          "!doc": "\n\nSerialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization."
+         },
+         "serialize": {
+          "!type": "fn(object: +Object, checkKeys: bool, asBuffer: bool, serializeFunctions: bool) -> ?",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#serialize",
+          "!doc": "\n\nSerialize a Javascript object."
+         },
+         "deserializeStream": {
+          "!type": "fn(data: ?, startIndex: number, numberOfDocuments: number, documents: [?], docStartIndex: number, options?: +Object) -> number",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#deserializeStream",
+          "!doc": "\n\nDeserialize stream data as BSON documents."
+         },
+         "deserialize": {
+          "!type": "fn(buffer: ?, options?: +Object, isArray?: bool) -> +Object",
+          "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#deserialize",
+          "!doc": "\n\nDeserialize data as BSON."
+         },
+         "prototype": {
+          "deserialize": {
+           "!type": "fn(buffer: ?, options?: +Object, isArray?: bool) -> +Object",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#deserialize",
+           "!doc": "\n\nDeserialize data as BSON."
+          },
+          "deserializeStream": {
+           "!type": "fn(data: ?, startIndex: number, numberOfDocuments: number, documents: [?], docStartIndex: number, options?: +Object) -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#deserializeStream",
+           "!doc": "\n\nDeserialize stream data as BSON documents."
+          },
+          "serialize": {
+           "!type": "fn(object: +Object, checkKeys: bool, asBuffer: bool, serializeFunctions: bool) -> ?",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#serialize",
+           "!doc": "\n\nSerialize a Javascript object."
+          },
+          "calculateObjectSize": {
+           "!type": "fn(object: +Object, serializeFunctions?: bool) -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#calculateObjectSize",
+           "!doc": "\n\nCalculate the bson size for a passed in Javascript object."
+          },
+          "serializeWithBufferAndIndex": {
+           "!type": "fn(object: +Object, checkKeys: bool, buffer: ?, index: number, serializeFunctions: bool) -> number",
+           "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#serializeWithBufferAndIndex",
+           "!doc": "\n\nSerialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization."
+          }
+         }
+        }
        }
       }
-      
+     
+           
   }
 });

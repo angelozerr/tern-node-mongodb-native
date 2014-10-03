@@ -10681,5 +10681,6303 @@ var api = {
     "string": "mergeBatchResults()"
    }
   }
+ ],
+ "objectid": [
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Module dependencies.</p>",
+    "summary": "<p>Module dependencies.</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "var BinaryParser = require('./binary_parser').BinaryParser;",
+   "ctx": {
+    "type": "declaration",
+    "name": "BinaryParser",
+    "value": "require('./binary_parser').BinaryParser",
+    "string": "BinaryParser"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Machine id.</p>\n\n<p>Create a random 3-byte value (i.e. unique for this<br />process). Other drivers use a md5 of the machine id here, but<br />that would mean an asyc call to gethostname, so we don't bother.</p>",
+    "summary": "<p>Machine id.</p>",
+    "body": "<p>Create a random 3-byte value (i.e. unique for this<br />process). Other drivers use a md5 of the machine id here, but<br />that would mean an asyc call to gethostname, so we don't bother.</p>"
+   },
+   "ignore": false,
+   "code": "var MACHINE_ID = parseInt(Math.random() * 0xFFFFFF, 10);\n\n// Regular expression that checks for hex value\nvar checkForHexRegExp = new RegExp(\"^[0-9a-fA-F]{24}$\");",
+   "ctx": {
+    "type": "declaration",
+    "name": "MACHINE_ID",
+    "value": "parseInt(Math.random() * 0xFFFFFF, 10)",
+    "string": "MACHINE_ID"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON ObjectID type"
+    },
+    {
+     "type": "param",
+     "types": [
+      "String",
+      "Number"
+     ],
+     "name": "id",
+     "description": "Can be a 24 byte hex string, 12 byte binary string or a Number."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Object"
+     ],
+     "description": "instance of ObjectID."
+    }
+   ],
+   "description": {
+    "full": "<p>Create a new ObjectID instance</p>",
+    "summary": "<p>Create a new ObjectID instance</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "var ObjectID = function ObjectID(id) {\n  if(!(this instanceof ObjectID)) return new ObjectID(id);\n  if((id instanceof ObjectID)) return id;\n\n  this._bsontype = 'ObjectID';\n  var __id = null;\n  var valid = ObjectID.isValid(id);\n\n  // Throw an error if it's not a valid setup\n  if(!valid && id != null){\n    throw new Error(\"Argument passed in must be a single String of 12 bytes or a string of 24 hex characters\");\n  } else if(valid && typeof id == 'string' && id.length == 24) {\n    return ObjectID.createFromHexString(id);\n  } else if(id == null || typeof id == 'number') {\n    // convert to 12 byte binary string\n    this.id = this.generate(id);\n  } else if(id != null && id.length === 12) {\n    // assume 12 byte string\n    this.id = id;\n  }\n\n  if(ObjectID.cacheHexString) this.__id = this.toHexString();\n};\n\n// Allow usage of ObjectId as well as ObjectID\nvar ObjectId = ObjectID;\n\n// Precomputed hex table enables speedy hex string conversion\nvar hexTable = [];\nfor (var i = 0; i < 256; i++) {\n  hexTable[i] = (i <= 15 ? '0' : '') + i.toString(16);\n}",
+   "ctx": {
+    "type": "function",
+    "name": "ObjectID",
+    "string": "ObjectID()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "return the 24 byte hex string representation."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the ObjectID id as a 24 byte hex string representation</p>",
+    "summary": "<p>Return the ObjectID id as a 24 byte hex string representation</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "ObjectID.prototype.toHexString = function() {\n  if(ObjectID.cacheHexString && this.__id) return this.__id;\n\n  var hexString = '';\n\n  for (var i = 0; i < this.id.length; i++) {\n    hexString += hexTable[this.id.charCodeAt(i)];\n  }\n\n  if(ObjectID.cacheHexString) this.__id = hexString;\n  return hexString;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "toHexString",
+    "string": "ObjectID.prototype.toHexString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns next index value."
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Update the ObjectID index used in generating new ObjectID's on the driver</p>",
+    "summary": "<p>Update the ObjectID index used in generating new ObjectID's on the driver</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.prototype.get_inc = function() {\n  return ObjectID.index = (ObjectID.index + 1) % 0xFFFFFF;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "get_inc",
+    "string": "ObjectID.prototype.get_inc()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns next index value."
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Update the ObjectID index used in generating new ObjectID's on the driver</p>",
+    "summary": "<p>Update the ObjectID index used in generating new ObjectID's on the driver</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.prototype.getInc = function() {\n  return this.get_inc();\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "getInc",
+    "string": "ObjectID.prototype.getInc()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "[time]",
+     "description": "optional parameter allowing to pass in a second based timestamp."
+    },
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "return the 12 byte id binary string."
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Generate a 12 byte id string used in ObjectID's</p>",
+    "summary": "<p>Generate a 12 byte id string used in ObjectID's</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.prototype.generate = function(time) {\n  if ('number' != typeof time) {\n    time = parseInt(Date.now()/1000,10);\n  }\n  \n  var time4Bytes = BinaryParser.encodeInt(time, 32, true, true);",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "generate",
+    "string": "ObjectID.prototype.generate()"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>for time-based ObjectID the bytes following the time will be zeroed</p>",
+    "summary": "<p>for time-based ObjectID the bytes following the time will be zeroed</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "var machine3Bytes = BinaryParser.encodeInt(MACHINE_ID, 24, false);\n  var pid2Bytes = BinaryParser.fromShort(typeof process === 'undefined' ? Math.floor(Math.random() * 100000) : process.pid);\n  var index3Bytes = BinaryParser.encodeInt(this.get_inc(), 24, false, true);\n\n  return time4Bytes + machine3Bytes + pid2Bytes + index3Bytes;\n};",
+   "ctx": {
+    "type": "declaration",
+    "name": "machine3Bytes",
+    "value": "BinaryParser.encodeInt(MACHINE_ID, 24, false)",
+    "string": "machine3Bytes"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "return the 24 byte hex string representation."
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Converts the id into a 24 byte hex string for printing</p>",
+    "summary": "<p>Converts the id into a 24 byte hex string for printing</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.prototype.toString = function() {\n  return this.toHexString();\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "toString",
+    "string": "ObjectID.prototype.toString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "return the 24 byte hex string representation."
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Converts to a string representation of this Id.</p>",
+    "summary": "<p>Converts to a string representation of this Id.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.prototype.inspect = ObjectID.prototype.toString;",
+   "ctx": {
+    "type": "property",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "inspect",
+    "value": "ObjectID.prototype.toString",
+    "string": "ObjectID.prototype.inspect"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "return the 24 byte hex string representation."
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Converts to its JSON representation.</p>",
+    "summary": "<p>Converts to its JSON representation.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.prototype.toJSON = function() {\n  return this.toHexString();\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "toJSON",
+    "string": "ObjectID.prototype.toJSON()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "otherID",
+     "description": "ObjectID instance to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Bool"
+     ],
+     "description": "the result of comparing two ObjectID's"
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Compares the equality of this ObjectID with <code>otherID</code>.</p>",
+    "summary": "<p>Compares the equality of this ObjectID with <code>otherID</code>.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "ObjectID.prototype.equals = function equals (otherID) {\n  if(otherID == null) return false;\n  var id = (otherID instanceof ObjectID || otherID.toHexString)\n    ? otherID.id\n    : ObjectID.createFromHexString(otherID).id;\n\n  return this.id === id;\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "equals",
+    "string": "ObjectID.prototype.equals()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Date"
+     ],
+     "description": "the generation date"
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the generation date (accurate up to the second) that this ID was generated.</p>",
+    "summary": "<p>Returns the generation date (accurate up to the second) that this ID was generated.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "ObjectID.prototype.getTimestamp = function() {\n  var timestamp = new Date();\n  timestamp.setTime(Math.floor(BinaryParser.decodeInt(this.id.substring(0,4), 32, true, true)) * 1000);\n  return timestamp;\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "ObjectID",
+    "cons": "ObjectID",
+    "name": "getTimestamp",
+    "string": "ObjectID.prototype.getTimestamp()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "ObjectID.index = parseInt(Math.random() * 0xFFFFFF, 10);\n\nObjectID.createPk = function createPk () {\n  return new ObjectID();\n};",
+   "ctx": {
+    "type": "property",
+    "receiver": "ObjectID",
+    "name": "index",
+    "value": "parseInt(Math.random() * 0xFFFFFF, 10)",
+    "string": "ObjectID.index"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "time",
+     "description": "an integer number representing a number of seconds."
+    },
+    {
+     "type": "return",
+     "types": [
+      "ObjectID"
+     ],
+     "description": "return the created ObjectID"
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Creates an ObjectID from a second based number, with the rest of the ObjectID zeroed out. Used for comparisons or sorting the ObjectID.</p>",
+    "summary": "<p>Creates an ObjectID from a second based number, with the rest of the ObjectID zeroed out. Used for comparisons or sorting the ObjectID.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "ObjectID.createFromTime = function createFromTime (time) {\n  var id = BinaryParser.encodeInt(time, 32, true, true) +\n           BinaryParser.encodeInt(0, 64, true, true);\n  return new ObjectID(id);\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "ObjectID",
+    "name": "createFromTime",
+    "string": "ObjectID.createFromTime()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "String"
+     ],
+     "name": "hexString",
+     "description": "create a ObjectID from a passed in 24 byte hexstring."
+    },
+    {
+     "type": "return",
+     "types": [
+      "ObjectID"
+     ],
+     "description": "return the created ObjectID"
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Creates an ObjectID from a hex string representation of an ObjectID.</p>",
+    "summary": "<p>Creates an ObjectID from a hex string representation of an ObjectID.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "ObjectID.createFromHexString = function createFromHexString (hexString) {\n  // Throw an error if it's not a valid setup\n  if(typeof hexString === 'undefined' || hexString != null && hexString.length != 24)\n    throw new Error(\"Argument passed in must be a single String of 12 bytes or a string of 24 hex characters\");\n\n  var len = hexString.length;\n\n  if(len > 12*2) {\n    throw new Error('Id cannot be longer than 12 bytes');\n  }\n\n  var result = ''\n    , string\n    , number;\n\n  for (var index = 0; index < len; index += 2) {\n    string = hexString.substr(index, 2);\n    number = parseInt(string, 16);\n    result += BinaryParser.fromByte(number);\n  }\n\n  return new ObjectID(result, hexString);\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "ObjectID",
+    "name": "createFromHexString",
+    "string": "ObjectID.createFromHexString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "return true if the value is a valid bson ObjectId, return false otherwise."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Checks if a value is a valid bson ObjectId</p>",
+    "summary": "<p>Checks if a value is a valid bson ObjectId</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "ObjectID.isValid = function isValid(id) {\n  if(id == null) return false;\n\n  if(id != null && 'number' != typeof id && (id.length != 12 && id.length != 24)) {\n    return false;\n  } else {\n    // Check specifically for hex correctness\n    if(typeof id == 'string' && id.length == 24) return checkForHexRegExp.test(id);\n    return true;\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "ObjectID",
+    "name": "isValid",
+    "string": "ObjectID.isValid()"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Object.defineProperty(ObjectID.prototype, \"generationTime\", {\n   enumerable: true\n , get: function () {\n     return Math.floor(BinaryParser.decodeInt(this.id.substring(0,4), 32, true, true));\n   }\n , set: function (value) {\n     var value = BinaryParser.encodeInt(value, 32, true, true);\n     this.id = value + this.id.substr(4);\n     // delete this.__id;\n     this.toHexString();\n   }\n});"
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Expose.</p>",
+    "summary": "<p>Expose.</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "exports.ObjectID = ObjectID;\nexports.ObjectId = ObjectID;",
+   "ctx": {
+    "type": "property",
+    "receiver": "exports",
+    "name": "ObjectID",
+    "value": "ObjectID",
+    "string": "exports.ObjectID"
+   }
+  }
+ ],
+ "binary": [
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Module dependencies.</p>",
+    "summary": "<p>Module dependencies.</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "if(typeof window === 'undefined') { \n  var Buffer = require('buffer').Buffer; // TODO just use global Buffer\n}\n\n// Binary default subtype\nvar BSON_BINARY_SUBTYPE_DEFAULT = 0;"
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var writeStringToArray = function(data) {\n  // Create a buffer\n  var buffer = typeof Uint8Array != 'undefined' ? new Uint8Array(new ArrayBuffer(data.length)) : new Array(data.length);\n  // Write the content to the buffer\n  for(var i = 0; i < data.length; i++) {\n    buffer[i] = data.charCodeAt(i);\n  }  \n  // Write the string to the buffer\n  return buffer;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "writeStringToArray",
+    "string": "writeStringToArray()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Convert Array ot Uint8Array to Binary String</p>",
+    "summary": "<p>Convert Array ot Uint8Array to Binary String</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var convertArraytoUtf8BinaryString = function(byteArray, startIndex, endIndex) {\n  var result = \"\";\n  for(var i = startIndex; i < endIndex; i++) {\n   result = result + String.fromCharCode(byteArray[i]);\n  }\n  return result;  \n};",
+   "ctx": {
+    "type": "function",
+    "name": "convertArraytoUtf8BinaryString",
+    "string": "convertArraytoUtf8BinaryString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the Binary BSON type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "buffer",
+     "description": "a buffer object containing the binary data."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "[subType]",
+     "description": "the option binary type."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Grid"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON Binary type.</p>\n\n<p>Sub types<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_DEFAULT</strong>, default BSON type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_FUNCTION</strong>, BSON function type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_BYTE_ARRAY</strong>, BSON byte array type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_UUID</strong>, BSON uuid type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_MD5</strong>, BSON md5 type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_USER_DEFINED</strong>, BSON user defined type.</p>",
+    "summary": "<p>A class representation of the BSON Binary type.</p>",
+    "body": "<p>Sub types<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_DEFAULT</strong>, default BSON type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_FUNCTION</strong>, BSON function type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_BYTE_ARRAY</strong>, BSON byte array type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_UUID</strong>, BSON uuid type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_MD5</strong>, BSON md5 type.<br /> - <strong>BSON.BSON_BINARY_SUBTYPE_USER_DEFINED</strong>, BSON user defined type.</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function Binary(buffer, subType) {\n  if(!(this instanceof Binary)) return new Binary(buffer, subType);\n  \n  this._bsontype = 'Binary';\n\n  if(buffer instanceof Number) {\n    this.sub_type = buffer;\n    this.position = 0;\n  } else {    \n    this.sub_type = subType == null ? BSON_BINARY_SUBTYPE_DEFAULT : subType;\n    this.position = 0;\n  }\n\n  if(buffer != null && !(buffer instanceof Number)) {\n    // Only accept Buffer, Uint8Array or Arrays\n    if(typeof buffer == 'string') {\n      // Different ways of writing the length of the string for the different types\n      if(typeof Buffer != 'undefined') {\n        this.buffer = new Buffer(buffer);\n      } else if(typeof Uint8Array != 'undefined' || (Object.prototype.toString.call(buffer) == '[object Array]')) {\n        this.buffer = writeStringToArray(buffer);\n      } else {\n        throw new Error(\"only String, Buffer, Uint8Array or Array accepted\");\n      }\n    } else {\n      this.buffer = buffer;      \n    }\n    this.position = buffer.length;\n  } else {\n    if(typeof Buffer != 'undefined') {\n      this.buffer =  new Buffer(Binary.BUFFER_SIZE);      \n    } else if(typeof Uint8Array != 'undefined'){\n      this.buffer = new Uint8Array(new ArrayBuffer(Binary.BUFFER_SIZE));\n    } else {\n      this.buffer = new Array(Binary.BUFFER_SIZE);\n    }\n    // Set position to start of buffer\n    this.position = 0;\n  }\n};",
+   "ctx": {
+    "type": "function",
+    "name": "Binary",
+    "string": "Binary()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Character"
+     ],
+     "name": "byte_value",
+     "description": "a single byte we wish to write."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Updates this binary with byte_value.</p>",
+    "summary": "<p>Updates this binary with byte_value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.prototype.put = function put(byte_value) {\n  // If it's a string and a has more than one character throw an error\n  if(byte_value['length'] != null && typeof byte_value != 'number' && byte_value.length != 1) throw new Error(\"only accepts single character String, Uint8Array or Array\");\n  if(typeof byte_value != 'number' && byte_value < 0 || byte_value > 255) throw new Error(\"only accepts number in a valid unsigned byte range 0-255\");\n  \n  // Decode the byte value once\n  var decoded_byte = null;\n  if(typeof byte_value == 'string') {\n    decoded_byte = byte_value.charCodeAt(0);      \n  } else if(byte_value['length'] != null) {\n    decoded_byte = byte_value[0];\n  } else {\n    decoded_byte = byte_value;\n  }\n  \n  if(this.buffer.length > this.position) {\n    this.buffer[this.position++] = decoded_byte;\n  } else {\n    if(typeof Buffer != 'undefined' && Buffer.isBuffer(this.buffer)) {    \n      // Create additional overflow buffer\n      var buffer = new Buffer(Binary.BUFFER_SIZE + this.buffer.length);\n      // Combine the two buffers together\n      this.buffer.copy(buffer, 0, 0, this.buffer.length);\n      this.buffer = buffer;\n      this.buffer[this.position++] = decoded_byte;\n    } else {\n      var buffer = null;\n      // Create a new buffer (typed or normal array)\n      if(Object.prototype.toString.call(this.buffer) == '[object Uint8Array]') {\n        buffer = new Uint8Array(new ArrayBuffer(Binary.BUFFER_SIZE + this.buffer.length));\n      } else {\n        buffer = new Array(Binary.BUFFER_SIZE + this.buffer.length);\n      }      \n      \n      // We need to copy all the content to the new array\n      for(var i = 0; i < this.buffer.length; i++) {\n        buffer[i] = this.buffer[i];\n      }\n      \n      // Reassign the buffer\n      this.buffer = buffer;\n      // Write the byte\n      this.buffer[this.position++] = decoded_byte;\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "put",
+    "string": "Binary.prototype.put()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Buffer",
+      "String"
+     ],
+     "name": "string",
+     "description": "a string or buffer to be written to the Binary BSON object."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "offset",
+     "description": "specify the binary of where to write the content."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Writes a buffer or string to the binary.</p>",
+    "summary": "<p>Writes a buffer or string to the binary.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.prototype.write = function write(string, offset) {\n  offset = typeof offset == 'number' ? offset : this.position;\n\n  // If the buffer is to small let's extend the buffer\n  if(this.buffer.length < offset + string.length) {\n    var buffer = null;\n    // If we are in node.js\n    if(typeof Buffer != 'undefined' && Buffer.isBuffer(this.buffer)) {      \n      buffer = new Buffer(this.buffer.length + string.length);\n      this.buffer.copy(buffer, 0, 0, this.buffer.length);      \n    } else if(Object.prototype.toString.call(this.buffer) == '[object Uint8Array]') {\n      // Create a new buffer\n      buffer = new Uint8Array(new ArrayBuffer(this.buffer.length + string.length))\n      // Copy the content\n      for(var i = 0; i < this.position; i++) {\n        buffer[i] = this.buffer[i];\n      }\n    }\n    \n    // Assign the new buffer\n    this.buffer = buffer;\n  }\n\n  if(typeof Buffer != 'undefined' && Buffer.isBuffer(string) && Buffer.isBuffer(this.buffer)) {\n    string.copy(this.buffer, offset, 0, string.length);\n    this.position = (offset + string.length) > this.position ? (offset + string.length) : this.position;\n    // offset = string.length\n  } else if(typeof Buffer != 'undefined' && typeof string == 'string' && Buffer.isBuffer(this.buffer)) {\n    this.buffer.write(string, 'binary', offset);\n    this.position = (offset + string.length) > this.position ? (offset + string.length) : this.position;\n    // offset = string.length;\n  } else if(Object.prototype.toString.call(string) == '[object Uint8Array]' \n    || Object.prototype.toString.call(string) == '[object Array]' && typeof string != 'string') {      \n    for(var i = 0; i < string.length; i++) {\n      this.buffer[offset++] = string[i];\n    }    \n\n    this.position = offset > this.position ? offset : this.position;\n  } else if(typeof string == 'string') {\n    for(var i = 0; i < string.length; i++) {\n      this.buffer[offset++] = string.charCodeAt(i);\n    }\n\n    this.position = offset > this.position ? offset : this.position;\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "write",
+    "string": "Binary.prototype.write()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "position",
+     "description": "read from the given position in the Binary."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "length",
+     "description": "the number of bytes to read."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Buffer"
+     ],
+     "description": ""
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Reads <strong>length</strong> bytes starting at <strong>position</strong>.</p>",
+    "summary": "<p>Reads <strong>length</strong> bytes starting at <strong>position</strong>.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.prototype.read = function read(position, length) {\n  length = length && length > 0\n    ? length\n    : this.position;\n  \n  // Let's return the data based on the type we have\n  if(this.buffer['slice']) {\n    return this.buffer.slice(position, position + length);\n  } else {\n    // Create a buffer to keep the result\n    var buffer = typeof Uint8Array != 'undefined' ? new Uint8Array(new ArrayBuffer(length)) : new Array(length);\n    for(var i = 0; i < length; i++) {\n      buffer[i] = this.buffer[position++];\n    }\n  }\n  // Return the buffer\n  return buffer;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "read",
+    "string": "Binary.prototype.read()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": ""
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the value of this binary as a string.</p>",
+    "summary": "<p>Returns the value of this binary as a string.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.prototype.value = function value(asRaw) {\n  asRaw = asRaw == null ? false : asRaw;  \n\n  // Optimize to serialize for the situation where the data == size of buffer\n  if(asRaw && typeof Buffer != 'undefined' && Buffer.isBuffer(this.buffer) && this.buffer.length == this.position)\n    return this.buffer;\n  \n  // If it's a node.js buffer object\n  if(typeof Buffer != 'undefined' && Buffer.isBuffer(this.buffer)) {\n    return asRaw ? this.buffer.slice(0, this.position) : this.buffer.toString('binary', 0, this.position);\n  } else {\n    if(asRaw) {\n      // we support the slice command use it\n      if(this.buffer['slice'] != null) {\n        return this.buffer.slice(0, this.position);\n      } else {\n        // Create a new buffer to copy content to\n        var newBuffer = Object.prototype.toString.call(this.buffer) == '[object Uint8Array]' ? new Uint8Array(new ArrayBuffer(this.position)) : new Array(this.position);\n        // Copy content\n        for(var i = 0; i < this.position; i++) {\n          newBuffer[i] = this.buffer[i];\n        }\n        // Return the buffer\n        return newBuffer;\n      }\n    } else {\n      return convertArraytoUtf8BinaryString(this.buffer, 0, this.position);\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "value",
+    "string": "Binary.prototype.value()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the length of the binary."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Length.</p>",
+    "summary": "<p>Length.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.prototype.length = function length() {\n  return this.position;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "length",
+    "string": "Binary.prototype.length()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Binary.prototype.toJSON = function() {\n  return this.buffer != null ? this.buffer.toString('base64') : '';\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "toJSON",
+    "string": "Binary.prototype.toJSON()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Binary.prototype.toString = function(format) {\n  return this.buffer != null ? this.buffer.slice(0, this.position).toString(format) : '';\n}\n\nBinary.BUFFER_SIZE = 256;",
+   "ctx": {
+    "type": "method",
+    "constructor": "Binary",
+    "cons": "Binary",
+    "name": "toString",
+    "string": "Binary.prototype.toString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>Default BSON type</p>",
+    "summary": "<p>Default BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_DEFAULT = 0;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_DEFAULT",
+    "value": "0",
+    "string": "Binary.SUBTYPE_DEFAULT"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>Function BSON type</p>",
+    "summary": "<p>Function BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_FUNCTION = 1;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_FUNCTION",
+    "value": "1",
+    "string": "Binary.SUBTYPE_FUNCTION"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>Byte Array BSON type</p>",
+    "summary": "<p>Byte Array BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_BYTE_ARRAY = 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_BYTE_ARRAY",
+    "value": "2",
+    "string": "Binary.SUBTYPE_BYTE_ARRAY"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>OLD UUID BSON type</p>",
+    "summary": "<p>OLD UUID BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_UUID_OLD = 3;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_UUID_OLD",
+    "value": "3",
+    "string": "Binary.SUBTYPE_UUID_OLD"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>UUID BSON type</p>",
+    "summary": "<p>UUID BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_UUID = 4;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_UUID",
+    "value": "4",
+    "string": "Binary.SUBTYPE_UUID"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>MD5 BSON type</p>",
+    "summary": "<p>MD5 BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_MD5 = 5;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_MD5",
+    "value": "5",
+    "string": "Binary.SUBTYPE_MD5"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>User BSON type</p>",
+    "summary": "<p>User BSON type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Binary.SUBTYPE_USER_DEFINED = 128;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Binary",
+    "name": "SUBTYPE_USER_DEFINED",
+    "value": "128",
+    "string": "Binary.SUBTYPE_USER_DEFINED"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Expose.</p>",
+    "summary": "<p>Expose.</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "exports.Binary = Binary;",
+   "ctx": {
+    "type": "property",
+    "receiver": "exports",
+    "name": "Binary",
+    "value": "Binary",
+    "string": "exports.Binary"
+   }
+  }
+ ],
+ "code": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON Code type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "String",
+      "Function"
+     ],
+     "name": "code",
+     "description": "a string or function."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "[scope]",
+     "description": "an optional scope for the function."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Code"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON Code type.</p>",
+    "summary": "<p>A class representation of the BSON Code type.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "var Code = function Code(code, scope) {\n  if(!(this instanceof Code)) return new Code(code, scope);\n  this._bsontype = 'Code';\n  this.code = code;\n  this.scope = scope == null ? {} : scope;\n};",
+   "ctx": {
+    "type": "function",
+    "name": "Code",
+    "string": "Code()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Code.prototype.toJSON = function() {\n  return {scope:this.scope, code:this.code};\n}\n\nexports.Code = Code;",
+   "ctx": {
+    "type": "method",
+    "constructor": "Code",
+    "cons": "Code",
+    "name": "toJSON",
+    "string": "Code.prototype.toJSON()"
+   }
+  }
+ ],
+ "db_ref": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON DBRef type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "String"
+     ],
+     "name": "namespace",
+     "description": "the collection name."
+    },
+    {
+     "type": "param",
+     "types": [
+      "ObjectID"
+     ],
+     "name": "oid",
+     "description": "the reference ObjectID."
+    },
+    {
+     "type": "param",
+     "types": [
+      "String"
+     ],
+     "name": "[db]",
+     "description": "optional db name, if omitted the reference is local to the current db."
+    },
+    {
+     "type": "return",
+     "types": [
+      "DBRef"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON DBRef type.</p>",
+    "summary": "<p>A class representation of the BSON DBRef type.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function DBRef(namespace, oid, db) {\n  if(!(this instanceof DBRef)) return new DBRef(namespace, oid, db);\n  \n  this._bsontype = 'DBRef';\n  this.namespace = namespace;\n  this.oid = oid;\n  this.db = db;\n};",
+   "ctx": {
+    "type": "function",
+    "name": "DBRef",
+    "string": "DBRef()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "DBRef.prototype.toJSON = function() {\n  return {\n    '$ref':this.namespace,\n    '$id':this.oid,\n    '$db':this.db == null ? '' : this.db\n  };\n}\n\nexports.DBRef = DBRef;",
+   "ctx": {
+    "type": "method",
+    "constructor": "DBRef",
+    "cons": "DBRef",
+    "name": "toJSON",
+    "string": "DBRef.prototype.toJSON()"
+   }
+  }
+ ],
+ "double": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON Double type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "value",
+     "description": "the number we want to represent as a double."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Double"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON Double type.</p>",
+    "summary": "<p>A class representation of the BSON Double type.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function Double(value) {\n  if(!(this instanceof Double)) return new Double(value);\n  \n  this._bsontype = 'Double';\n  this.value = value;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "Double",
+    "string": "Double()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the wrapped double number."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Access the number value.</p>",
+    "summary": "<p>Access the number value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Double.prototype.valueOf = function() {\n  return this.value;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Double",
+    "cons": "Double",
+    "name": "valueOf",
+    "string": "Double.prototype.valueOf()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Double.prototype.toJSON = function() {\n  return this.value;\n}\n\nexports.Double = Double;",
+   "ctx": {
+    "type": "method",
+    "constructor": "Double",
+    "cons": "Double",
+    "name": "toJSON",
+    "string": "Double.prototype.toJSON()"
+   }
+  }
+ ],
+ "minkey": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON MinKey type."
+    },
+    {
+     "type": "return",
+     "types": [
+      "MinKey"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON MinKey type.</p>",
+    "summary": "<p>A class representation of the BSON MinKey type.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function MinKey() {\n  if(!(this instanceof MinKey)) return new MinKey();\n  \n  this._bsontype = 'MinKey';\n}\n\nexports.MinKey = MinKey;",
+   "ctx": {
+    "type": "function",
+    "name": "MinKey",
+    "string": "MinKey()"
+   }
+  }
+ ],
+ "maxkey": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON MaxKey type."
+    },
+    {
+     "type": "return",
+     "types": [
+      "MaxKey"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON MaxKey type.</p>",
+    "summary": "<p>A class representation of the BSON MaxKey type.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function MaxKey() {\n  if(!(this instanceof MaxKey)) return new MaxKey();\n  \n  this._bsontype = 'MaxKey';  \n}\n\nexports.MaxKey = MaxKey;",
+   "ctx": {
+    "type": "function",
+    "name": "MaxKey",
+    "string": "MaxKey()"
+   }
+  }
+ ],
+ "symbol": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON Symbol type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "String"
+     ],
+     "name": "value",
+     "description": "the string representing the symbol."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Symbol"
+     ],
+     "description": ""
+    }
+   ],
+   "description": {
+    "full": "<p>A class representation of the BSON Symbol type.</p>",
+    "summary": "<p>A class representation of the BSON Symbol type.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function Symbol(value) {\n  if(!(this instanceof Symbol)) return new Symbol(value);\n  this._bsontype = 'Symbol';\n  this.value = value;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "Symbol",
+    "string": "Symbol()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "returns the wrapped string."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Access the wrapped string value.</p>",
+    "summary": "<p>Access the wrapped string value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Symbol.prototype.valueOf = function() {\n  return this.value;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Symbol",
+    "cons": "Symbol",
+    "name": "valueOf",
+    "string": "Symbol.prototype.valueOf()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Symbol.prototype.toString = function() {\n  return this.value;\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "Symbol",
+    "cons": "Symbol",
+    "name": "toString",
+    "string": "Symbol.prototype.toString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Symbol.prototype.inspect = function() {\n  return this.value;\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "Symbol",
+    "cons": "Symbol",
+    "name": "inspect",
+    "string": "Symbol.prototype.inspect()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Symbol.prototype.toJSON = function() {\n  return this.value;\n}\n\nexports.Symbol = Symbol;",
+   "ctx": {
+    "type": "method",
+    "constructor": "Symbol",
+    "cons": "Symbol",
+    "name": "toJSON",
+    "string": "Symbol.prototype.toJSON()"
+   }
+  }
+ ],
+ "timestamp": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON Timestamp type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "low",
+     "description": "the low (signed) 32 bits of the Timestamp."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "high",
+     "description": "the high (signed) 32 bits of the Timestamp."
+    }
+   ],
+   "description": {
+    "full": "<p>Defines a Timestamp class for representing a 64-bit two's-complement<br />integer value, which faithfully simulates the behavior of a Java \"Timestamp\". This<br />implementation is derived from TimestampLib in GWT.</p>\n\n<p>Constructs a 64-bit two's-complement integer, given its low and high 32-bit<br />values as <em>signed</em> integers.  See the from* functions below for more<br />convenient ways of constructing Timestamps.</p>\n\n<p>The internal representation of a Timestamp is the two given signed, 32-bit values.<br />We use 32-bit pieces because these are the size of integers on which<br />Javascript performs bit-operations.  For operations like addition and<br />multiplication, we split each number into 16-bit pieces, which can easily be<br />multiplied within Javascript's floating-point representation without overflow<br />or change in sign.</p>\n\n<p>In the algorithms below, we frequently reduce the negative case to the<br />positive case by negating the input(s) and then post-processing the result.<br />Note that we must ALWAYS check specially whether those values are MIN_VALUE<br />(-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as<br />a positive number, it overflows back into a negative).  Not handling this<br />case would often result in infinite recursion.</p>",
+    "summary": "<p>Defines a Timestamp class for representing a 64-bit two's-complement<br />integer value, which faithfully simulates the behavior of a Java \"Timestamp\". This<br />implementation is derived from TimestampLib in GWT.</p>",
+    "body": "<p>Constructs a 64-bit two's-complement integer, given its low and high 32-bit<br />values as <em>signed</em> integers.  See the from* functions below for more<br />convenient ways of constructing Timestamps.</p>\n\n<p>The internal representation of a Timestamp is the two given signed, 32-bit values.<br />We use 32-bit pieces because these are the size of integers on which<br />Javascript performs bit-operations.  For operations like addition and<br />multiplication, we split each number into 16-bit pieces, which can easily be<br />multiplied within Javascript's floating-point representation without overflow<br />or change in sign.</p>\n\n<p>In the algorithms below, we frequently reduce the negative case to the<br />positive case by negating the input(s) and then post-processing the result.<br />Note that we must ALWAYS check specially whether those values are MIN_VALUE<br />(-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as<br />a positive number, it overflows back into a negative).  Not handling this<br />case would often result in infinite recursion.</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function Timestamp(low, high) {\n  if(!(this instanceof Timestamp)) return new Timestamp(low, high);\n  this._bsontype = 'Timestamp';",
+   "ctx": {
+    "type": "function",
+    "name": "Timestamp",
+    "string": "Timestamp()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "this.low_ = low | 0;  // force into 32 signed bits.",
+   "ctx": {
+    "type": "property",
+    "receiver": "this",
+    "name": "low_",
+    "value": "low | 0",
+    "string": "this.low_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "this.high_ = high | 0;  // force into 32 signed bits.\n};",
+   "ctx": {
+    "type": "property",
+    "receiver": "this",
+    "name": "high_",
+    "value": "high | 0",
+    "string": "this.high_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the value, assuming it is a 32-bit integer."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the int value.</p>",
+    "summary": "<p>Return the int value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.toInt = function() {\n  return this.low_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "toInt",
+    "string": "Timestamp.prototype.toInt()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the closest floating-point representation to this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the Number value.</p>",
+    "summary": "<p>Return the Number value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.toNumber = function() {\n  return this.high_ * Timestamp.TWO_PWR_32_DBL_ +\n         this.getLowBitsUnsigned();\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "toNumber",
+    "string": "Timestamp.prototype.toNumber()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "the JSON representation."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the JSON value.</p>",
+    "summary": "<p>Return the JSON value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.toJSON = function() {\n  return this.toString();\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "toJSON",
+    "string": "Timestamp.prototype.toJSON()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "[opt_radix]",
+     "description": "the radix in which the text should be written."
+    },
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "the textual representation of this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the String value.</p>",
+    "summary": "<p>Return the String value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.toString = function(opt_radix) {\n  var radix = opt_radix || 10;\n  if (radix < 2 || 36 < radix) {\n    throw Error('radix out of range: ' + radix);\n  }\n\n  if (this.isZero()) {\n    return '0';\n  }\n\n  if (this.isNegative()) {\n    if (this.equals(Timestamp.MIN_VALUE)) {\n      // We need to change the Timestamp value before it can be negated, so we remove\n      // the bottom-most digit in this base and then recurse to do the rest.\n      var radixTimestamp = Timestamp.fromNumber(radix);\n      var div = this.div(radixTimestamp);\n      var rem = div.multiply(radixTimestamp).subtract(this);\n      return div.toString(radix) + rem.toInt().toString(radix);\n    } else {\n      return '-' + this.negate().toString(radix);\n    }\n  }\n\n  // Do several (6) digits each time through the loop, so as to\n  // minimize the calls to the very expensive emulated div.\n  var radixToPower = Timestamp.fromNumber(Math.pow(radix, 6));\n\n  var rem = this;\n  var result = '';\n  while (true) {\n    var remDiv = rem.div(radixToPower);\n    var intval = rem.subtract(remDiv.multiply(radixToPower)).toInt();\n    var digits = intval.toString(radix);\n\n    rem = remDiv;\n    if (rem.isZero()) {\n      return digits + result;\n    } else {\n      while (digits.length < 6) {\n        digits = '0' + digits;\n      }\n      result = '' + digits + result;\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "toString",
+    "string": "Timestamp.prototype.toString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the high 32-bits as a signed value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the high 32-bits value.</p>",
+    "summary": "<p>Return the high 32-bits value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.getHighBits = function() {\n  return this.high_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "getHighBits",
+    "string": "Timestamp.prototype.getHighBits()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the low 32-bits as a signed value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the low 32-bits value.</p>",
+    "summary": "<p>Return the low 32-bits value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.getLowBits = function() {\n  return this.low_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "getLowBits",
+    "string": "Timestamp.prototype.getLowBits()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the low 32-bits as an unsigned value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the low unsigned 32-bits value.</p>",
+    "summary": "<p>Return the low unsigned 32-bits value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.getLowBitsUnsigned = function() {\n  return (this.low_ >= 0) ?\n      this.low_ : Timestamp.TWO_PWR_32_DBL_ + this.low_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "getLowBitsUnsigned",
+    "string": "Timestamp.prototype.getLowBitsUnsigned()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "Returns the number of bits needed to represent the absolute value of this Timestamp."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the number of bits needed to represent the absolute value of this Timestamp.</p>",
+    "summary": "<p>Returns the number of bits needed to represent the absolute value of this Timestamp.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.getNumBitsAbs = function() {\n  if (this.isNegative()) {\n    if (this.equals(Timestamp.MIN_VALUE)) {\n      return 64;\n    } else {\n      return this.negate().getNumBitsAbs();\n    }\n  } else {\n    var val = this.high_ != 0 ? this.high_ : this.low_;\n    for (var bit = 31; bit > 0; bit--) {\n      if ((val & (1 << bit)) != 0) {\n        break;\n      }\n    }\n    return this.high_ != 0 ? bit + 33 : bit + 1;\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "getNumBitsAbs",
+    "string": "Timestamp.prototype.getNumBitsAbs()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this value is zero."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this value is zero.</p>",
+    "summary": "<p>Return whether this value is zero.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.isZero = function() {\n  return this.high_ == 0 && this.low_ == 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "isZero",
+    "string": "Timestamp.prototype.isZero()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this value is negative."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this value is negative.</p>",
+    "summary": "<p>Return whether this value is negative.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.isNegative = function() {\n  return this.high_ < 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "isNegative",
+    "string": "Timestamp.prototype.isNegative()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this value is odd."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this value is odd.</p>",
+    "summary": "<p>Return whether this value is odd.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.isOdd = function() {\n  return (this.low_ & 1) == 1;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "isOdd",
+    "string": "Timestamp.prototype.isOdd()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Timestamp equals the other"
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Timestamp equals the other</p>",
+    "summary": "<p>Return whether this Timestamp equals the other</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.equals = function(other) {\n  return (this.high_ == other.high_) && (this.low_ == other.low_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "equals",
+    "string": "Timestamp.prototype.equals()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Timestamp does not equal the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Timestamp does not equal the other.</p>",
+    "summary": "<p>Return whether this Timestamp does not equal the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.notEquals = function(other) {\n  return (this.high_ != other.high_) || (this.low_ != other.low_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "notEquals",
+    "string": "Timestamp.prototype.notEquals()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Timestamp is less than the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Timestamp is less than the other.</p>",
+    "summary": "<p>Return whether this Timestamp is less than the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.lessThan = function(other) {\n  return this.compare(other) < 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "lessThan",
+    "string": "Timestamp.prototype.lessThan()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Timestamp is less than or equal to the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Timestamp is less than or equal to the other.</p>",
+    "summary": "<p>Return whether this Timestamp is less than or equal to the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.lessThanOrEqual = function(other) {\n  return this.compare(other) <= 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "lessThanOrEqual",
+    "string": "Timestamp.prototype.lessThanOrEqual()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Timestamp is greater than the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Timestamp is greater than the other.</p>",
+    "summary": "<p>Return whether this Timestamp is greater than the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.greaterThan = function(other) {\n  return this.compare(other) > 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "greaterThan",
+    "string": "Timestamp.prototype.greaterThan()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Timestamp is greater than or equal to the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Timestamp is greater than or equal to the other.</p>",
+    "summary": "<p>Return whether this Timestamp is greater than or equal to the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.greaterThanOrEqual = function(other) {\n  return this.compare(other) >= 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "greaterThanOrEqual",
+    "string": "Timestamp.prototype.greaterThanOrEqual()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "0 if they are the same, 1 if the this is greater, and -1 if the given one is greater."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Compares this Timestamp with the given one.</p>",
+    "summary": "<p>Compares this Timestamp with the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.compare = function(other) {\n  if (this.equals(other)) {\n    return 0;\n  }\n\n  var thisNeg = this.isNegative();\n  var otherNeg = other.isNegative();\n  if (thisNeg && !otherNeg) {\n    return -1;\n  }\n  if (!thisNeg && otherNeg) {\n    return 1;\n  }\n\n  // at this point, the signs are the same, so subtraction will not overflow\n  if (this.subtract(other).isNegative()) {\n    return -1;\n  } else {\n    return 1;\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "compare",
+    "string": "Timestamp.prototype.compare()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the negation of this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>The negation of this value.</p>",
+    "summary": "<p>The negation of this value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.negate = function() {\n  if (this.equals(Timestamp.MIN_VALUE)) {\n    return Timestamp.MIN_VALUE;\n  } else {\n    return this.not().add(Timestamp.ONE);\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "negate",
+    "string": "Timestamp.prototype.negate()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to add to this one."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the sum of this and the given Timestamp."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the sum of this and the given Timestamp.</p>",
+    "summary": "<p>Returns the sum of this and the given Timestamp.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.add = function(other) {\n  // Divide each number into 4 chunks of 16 bits, and then sum the chunks.\n\n  var a48 = this.high_ >>> 16;\n  var a32 = this.high_ & 0xFFFF;\n  var a16 = this.low_ >>> 16;\n  var a00 = this.low_ & 0xFFFF;\n\n  var b48 = other.high_ >>> 16;\n  var b32 = other.high_ & 0xFFFF;\n  var b16 = other.low_ >>> 16;\n  var b00 = other.low_ & 0xFFFF;\n\n  var c48 = 0, c32 = 0, c16 = 0, c00 = 0;\n  c00 += a00 + b00;\n  c16 += c00 >>> 16;\n  c00 &= 0xFFFF;\n  c16 += a16 + b16;\n  c32 += c16 >>> 16;\n  c16 &= 0xFFFF;\n  c32 += a32 + b32;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c48 += a48 + b48;\n  c48 &= 0xFFFF;\n  return Timestamp.fromBits((c16 << 16) | c00, (c48 << 16) | c32);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "add",
+    "string": "Timestamp.prototype.add()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to subtract from this."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the difference of this and the given Timestamp."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the difference of this and the given Timestamp.</p>",
+    "summary": "<p>Returns the difference of this and the given Timestamp.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.subtract = function(other) {\n  return this.add(other.negate());\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "subtract",
+    "string": "Timestamp.prototype.subtract()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp to multiply with this."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the product of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the product of this and the given Timestamp.</p>",
+    "summary": "<p>Returns the product of this and the given Timestamp.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.multiply = function(other) {\n  if (this.isZero()) {\n    return Timestamp.ZERO;\n  } else if (other.isZero()) {\n    return Timestamp.ZERO;\n  }\n\n  if (this.equals(Timestamp.MIN_VALUE)) {\n    return other.isOdd() ? Timestamp.MIN_VALUE : Timestamp.ZERO;\n  } else if (other.equals(Timestamp.MIN_VALUE)) {\n    return this.isOdd() ? Timestamp.MIN_VALUE : Timestamp.ZERO;\n  }\n\n  if (this.isNegative()) {\n    if (other.isNegative()) {\n      return this.negate().multiply(other.negate());\n    } else {\n      return this.negate().multiply(other).negate();\n    }\n  } else if (other.isNegative()) {\n    return this.multiply(other.negate()).negate();\n  }\n\n  // If both Timestamps are small, use float multiplication\n  if (this.lessThan(Timestamp.TWO_PWR_24_) &&\n      other.lessThan(Timestamp.TWO_PWR_24_)) {\n    return Timestamp.fromNumber(this.toNumber() * other.toNumber());\n  }\n\n  // Divide each Timestamp into 4 chunks of 16 bits, and then add up 4x4 products.\n  // We can skip products that would overflow.\n\n  var a48 = this.high_ >>> 16;\n  var a32 = this.high_ & 0xFFFF;\n  var a16 = this.low_ >>> 16;\n  var a00 = this.low_ & 0xFFFF;\n\n  var b48 = other.high_ >>> 16;\n  var b32 = other.high_ & 0xFFFF;\n  var b16 = other.low_ >>> 16;\n  var b00 = other.low_ & 0xFFFF;\n\n  var c48 = 0, c32 = 0, c16 = 0, c00 = 0;\n  c00 += a00 * b00;\n  c16 += c00 >>> 16;\n  c00 &= 0xFFFF;\n  c16 += a16 * b00;\n  c32 += c16 >>> 16;\n  c16 &= 0xFFFF;\n  c16 += a00 * b16;\n  c32 += c16 >>> 16;\n  c16 &= 0xFFFF;\n  c32 += a32 * b00;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c32 += a16 * b16;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c32 += a00 * b32;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48;\n  c48 &= 0xFFFF;\n  return Timestamp.fromBits((c16 << 16) | c00, (c48 << 16) | c32);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "multiply",
+    "string": "Timestamp.prototype.multiply()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp by which to divide."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "this Timestamp divided by the given one."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Timestamp divided by the given one.</p>",
+    "summary": "<p>Returns this Timestamp divided by the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.div = function(other) {\n  if (other.isZero()) {\n    throw Error('division by zero');\n  } else if (this.isZero()) {\n    return Timestamp.ZERO;\n  }\n\n  if (this.equals(Timestamp.MIN_VALUE)) {\n    if (other.equals(Timestamp.ONE) ||\n        other.equals(Timestamp.NEG_ONE)) {\n      return Timestamp.MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE\n    } else if (other.equals(Timestamp.MIN_VALUE)) {\n      return Timestamp.ONE;\n    } else {\n      // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.\n      var halfThis = this.shiftRight(1);\n      var approx = halfThis.div(other).shiftLeft(1);\n      if (approx.equals(Timestamp.ZERO)) {\n        return other.isNegative() ? Timestamp.ONE : Timestamp.NEG_ONE;\n      } else {\n        var rem = this.subtract(other.multiply(approx));\n        var result = approx.add(rem.div(other));\n        return result;\n      }\n    }\n  } else if (other.equals(Timestamp.MIN_VALUE)) {\n    return Timestamp.ZERO;\n  }\n\n  if (this.isNegative()) {\n    if (other.isNegative()) {\n      return this.negate().div(other.negate());\n    } else {\n      return this.negate().div(other).negate();\n    }\n  } else if (other.isNegative()) {\n    return this.div(other.negate()).negate();\n  }\n\n  // Repeat the following until the remainder is less than other:  find a\n  // floating-point that approximates remainder / other *from below*, add this\n  // into the result, and subtract it from the remainder.  It is critical that\n  // the approximate value is less than or equal to the real value so that the\n  // remainder never becomes negative.\n  var res = Timestamp.ZERO;\n  var rem = this;\n  while (rem.greaterThanOrEqual(other)) {\n    // Approximate the result of division. This may be a little greater or\n    // smaller than the actual value.\n    var approx = Math.max(1, Math.floor(rem.toNumber() / other.toNumber()));\n\n    // We will tweak the approximate result by changing it in the 48-th digit or\n    // the smallest non-fractional digit, whichever is larger.\n    var log2 = Math.ceil(Math.log(approx) / Math.LN2);\n    var delta = (log2 <= 48) ? 1 : Math.pow(2, log2 - 48);\n\n    // Decrease the approximation until it is smaller than the remainder.  Note\n    // that if it is too large, the product overflows and is negative.\n    var approxRes = Timestamp.fromNumber(approx);\n    var approxRem = approxRes.multiply(other);\n    while (approxRem.isNegative() || approxRem.greaterThan(rem)) {\n      approx -= delta;\n      approxRes = Timestamp.fromNumber(approx);\n      approxRem = approxRes.multiply(other);\n    }\n\n    // We know the answer can't be zero... and actually, zero would cause\n    // infinite recursion since we would make no progress.\n    if (approxRes.isZero()) {\n      approxRes = Timestamp.ONE;\n    }\n\n    res = res.add(approxRes);\n    rem = rem.subtract(approxRem);\n  }\n  return res;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "div",
+    "string": "Timestamp.prototype.div()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "Timestamp by which to mod."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "this Timestamp modulo the given one."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Timestamp modulo the given one.</p>",
+    "summary": "<p>Returns this Timestamp modulo the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.modulo = function(other) {\n  return this.subtract(this.div(other).multiply(other));\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "modulo",
+    "string": "Timestamp.prototype.modulo()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the bitwise-NOT of this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>The bitwise-NOT of this value.</p>",
+    "summary": "<p>The bitwise-NOT of this value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.not = function() {\n  return Timestamp.fromBits(~this.low_, ~this.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "not",
+    "string": "Timestamp.prototype.not()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "the Timestamp with which to AND."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the bitwise-AND of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the bitwise-AND of this Timestamp and the given one.</p>",
+    "summary": "<p>Returns the bitwise-AND of this Timestamp and the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.and = function(other) {\n  return Timestamp.fromBits(this.low_ & other.low_, this.high_ & other.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "and",
+    "string": "Timestamp.prototype.and()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "the Timestamp with which to OR."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the bitwise-OR of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the bitwise-OR of this Timestamp and the given one.</p>",
+    "summary": "<p>Returns the bitwise-OR of this Timestamp and the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.or = function(other) {\n  return Timestamp.fromBits(this.low_ | other.low_, this.high_ | other.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "or",
+    "string": "Timestamp.prototype.or()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Timestamp"
+     ],
+     "name": "other",
+     "description": "the Timestamp with which to XOR."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the bitwise-XOR of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the bitwise-XOR of this Timestamp and the given one.</p>",
+    "summary": "<p>Returns the bitwise-XOR of this Timestamp and the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.xor = function(other) {\n  return Timestamp.fromBits(this.low_ ^ other.low_, this.high_ ^ other.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "xor",
+    "string": "Timestamp.prototype.xor()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numBits",
+     "description": "the number of bits by which to shift."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "this shifted to the left by the given amount."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Timestamp with bits shifted to the left by the given amount.</p>",
+    "summary": "<p>Returns this Timestamp with bits shifted to the left by the given amount.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.shiftLeft = function(numBits) {\n  numBits &= 63;\n  if (numBits == 0) {\n    return this;\n  } else {\n    var low = this.low_;\n    if (numBits < 32) {\n      var high = this.high_;\n      return Timestamp.fromBits(\n                 low << numBits,\n                 (high << numBits) | (low >>> (32 - numBits)));\n    } else {\n      return Timestamp.fromBits(0, low << (numBits - 32));\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "shiftLeft",
+    "string": "Timestamp.prototype.shiftLeft()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numBits",
+     "description": "the number of bits by which to shift."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "this shifted to the right by the given amount."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Timestamp with bits shifted to the right by the given amount.</p>",
+    "summary": "<p>Returns this Timestamp with bits shifted to the right by the given amount.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.shiftRight = function(numBits) {\n  numBits &= 63;\n  if (numBits == 0) {\n    return this;\n  } else {\n    var high = this.high_;\n    if (numBits < 32) {\n      var low = this.low_;\n      return Timestamp.fromBits(\n                 (low >>> numBits) | (high << (32 - numBits)),\n                 high >> numBits);\n    } else {\n      return Timestamp.fromBits(\n                 high >> (numBits - 32),\n                 high >= 0 ? 0 : -1);\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "shiftRight",
+    "string": "Timestamp.prototype.shiftRight()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numBits",
+     "description": "the number of bits by which to shift."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "this shifted to the right by the given amount, with zeros placed into the new leading bits."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Timestamp with bits shifted to the right by the given amount, with the new top bits matching the current sign bit.</p>",
+    "summary": "<p>Returns this Timestamp with bits shifted to the right by the given amount, with the new top bits matching the current sign bit.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.prototype.shiftRightUnsigned = function(numBits) {\n  numBits &= 63;\n  if (numBits == 0) {\n    return this;\n  } else {\n    var high = this.high_;\n    if (numBits < 32) {\n      var low = this.low_;\n      return Timestamp.fromBits(\n                 (low >>> numBits) | (high << (32 - numBits)),\n                 high >>> numBits);\n    } else if (numBits == 32) {\n      return Timestamp.fromBits(high, 0);\n    } else {\n      return Timestamp.fromBits(high >>> (numBits - 32), 0);\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Timestamp",
+    "cons": "Timestamp",
+    "name": "shiftRightUnsigned",
+    "string": "Timestamp.prototype.shiftRightUnsigned()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "value",
+     "description": "the 32-bit integer in question."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the corresponding Timestamp value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Timestamp representing the given (32-bit) integer value.</p>",
+    "summary": "<p>Returns a Timestamp representing the given (32-bit) integer value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.fromInt = function(value) {\n  if (-128 <= value && value < 128) {\n    var cachedObj = Timestamp.INT_CACHE_[value];\n    if (cachedObj) {\n      return cachedObj;\n    }\n  }\n\n  var obj = new Timestamp(value | 0, value < 0 ? -1 : 0);\n  if (-128 <= value && value < 128) {\n    Timestamp.INT_CACHE_[value] = obj;\n  }\n  return obj;\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "Timestamp",
+    "name": "fromInt",
+    "string": "Timestamp.fromInt()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "value",
+     "description": "the number in question."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the corresponding Timestamp value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Timestamp representing the given value, provided that it is a finite number. Otherwise, zero is returned.</p>",
+    "summary": "<p>Returns a Timestamp representing the given value, provided that it is a finite number. Otherwise, zero is returned.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.fromNumber = function(value) {\n  if (isNaN(value) || !isFinite(value)) {\n    return Timestamp.ZERO;\n  } else if (value <= -Timestamp.TWO_PWR_63_DBL_) {\n    return Timestamp.MIN_VALUE;\n  } else if (value + 1 >= Timestamp.TWO_PWR_63_DBL_) {\n    return Timestamp.MAX_VALUE;\n  } else if (value < 0) {\n    return Timestamp.fromNumber(-value).negate();\n  } else {\n    return new Timestamp(\n               (value % Timestamp.TWO_PWR_32_DBL_) | 0,\n               (value / Timestamp.TWO_PWR_32_DBL_) | 0);\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "Timestamp",
+    "name": "fromNumber",
+    "string": "Timestamp.fromNumber()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "lowBits",
+     "description": "the low 32-bits."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "highBits",
+     "description": "the high 32-bits."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the corresponding Timestamp value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Timestamp representing the 64-bit integer that comes by concatenating the given high and low bits. Each is assumed to use 32 bits.</p>",
+    "summary": "<p>Returns a Timestamp representing the 64-bit integer that comes by concatenating the given high and low bits. Each is assumed to use 32 bits.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.fromBits = function(lowBits, highBits) {\n  return new Timestamp(lowBits, highBits);\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "Timestamp",
+    "name": "fromBits",
+    "string": "Timestamp.fromBits()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "String"
+     ],
+     "name": "str",
+     "description": "the textual representation of the Timestamp."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "opt_radix",
+     "description": "the radix in which the text is written."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Timestamp"
+     ],
+     "description": "the corresponding Timestamp value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Timestamp representation of the given string, written using the given radix.</p>",
+    "summary": "<p>Returns a Timestamp representation of the given string, written using the given radix.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Timestamp.fromString = function(str, opt_radix) {\n  if (str.length == 0) {\n    throw Error('number format error: empty string');\n  }\n\n  var radix = opt_radix || 10;\n  if (radix < 2 || 36 < radix) {\n    throw Error('radix out of range: ' + radix);\n  }\n\n  if (str.charAt(0) == '-') {\n    return Timestamp.fromString(str.substring(1), radix).negate();\n  } else if (str.indexOf('-') >= 0) {\n    throw Error('number format error: interior \"-\" character: ' + str);\n  }\n\n  // Do several (8) digits each time through the loop, so as to\n  // minimize the calls to the very expensive emulated div.\n  var radixToPower = Timestamp.fromNumber(Math.pow(radix, 8));\n\n  var result = Timestamp.ZERO;\n  for (var i = 0; i < str.length; i += 8) {\n    var size = Math.min(8, str.length - i);\n    var value = parseInt(str.substring(i, i + size), radix);\n    if (size < 8) {\n      var power = Timestamp.fromNumber(Math.pow(radix, size));\n      result = result.multiply(power).add(Timestamp.fromNumber(value));\n    } else {\n      result = result.multiply(radixToPower);\n      result = result.add(Timestamp.fromNumber(value));\n    }\n  }\n  return result;\n};\n\n// NOTE: Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the\n// from* methods on which they depend.",
+   "ctx": {
+    "type": "method",
+    "receiver": "Timestamp",
+    "name": "fromString",
+    "string": "Timestamp.fromString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "type",
+     "types": [
+      "Object"
+     ]
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>A cache of the Timestamp representations of small integer values.</p>",
+    "summary": "<p>A cache of the Timestamp representations of small integer values.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.INT_CACHE_ = {};\n\n// NOTE: the compiler should inline these constant values below and then remove\n// these variables, so there should be no runtime penalty for these.",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "INT_CACHE_",
+    "value": "{}",
+    "string": "Timestamp.INT_CACHE_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "type",
+     "types": [
+      "number"
+     ]
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Number used repeated below in calculations.  This must appear before the<br />first call to any from* function below.</p>",
+    "summary": "<p>Number used repeated below in calculations.  This must appear before the<br />first call to any from* function below.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_16_DBL_ = 1 << 16;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_16_DBL_",
+    "value": "1 << 16",
+    "string": "Timestamp.TWO_PWR_16_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_24_DBL_ = 1 << 24;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_24_DBL_",
+    "value": "1 << 24",
+    "string": "Timestamp.TWO_PWR_24_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_32_DBL_ = Timestamp.TWO_PWR_16_DBL_ * Timestamp.TWO_PWR_16_DBL_;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_32_DBL_",
+    "value": "Timestamp.TWO_PWR_16_DBL_ * Timestamp.TWO_PWR_16_DBL_",
+    "string": "Timestamp.TWO_PWR_32_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_31_DBL_ = Timestamp.TWO_PWR_32_DBL_ / 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_31_DBL_",
+    "value": "Timestamp.TWO_PWR_32_DBL_ / 2",
+    "string": "Timestamp.TWO_PWR_31_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_48_DBL_ = Timestamp.TWO_PWR_32_DBL_ * Timestamp.TWO_PWR_16_DBL_;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_48_DBL_",
+    "value": "Timestamp.TWO_PWR_32_DBL_ * Timestamp.TWO_PWR_16_DBL_",
+    "string": "Timestamp.TWO_PWR_48_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_64_DBL_ = Timestamp.TWO_PWR_32_DBL_ * Timestamp.TWO_PWR_32_DBL_;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_64_DBL_",
+    "value": "Timestamp.TWO_PWR_32_DBL_ * Timestamp.TWO_PWR_32_DBL_",
+    "string": "Timestamp.TWO_PWR_64_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_63_DBL_ = Timestamp.TWO_PWR_64_DBL_ / 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_63_DBL_",
+    "value": "Timestamp.TWO_PWR_64_DBL_ / 2",
+    "string": "Timestamp.TWO_PWR_63_DBL_"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Timestamp}</p>",
+    "summary": "<p>@type {Timestamp}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Timestamp.ZERO = Timestamp.fromInt(0);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "ZERO",
+    "value": "Timestamp.fromInt(0)",
+    "string": "Timestamp.ZERO"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Timestamp}</p>",
+    "summary": "<p>@type {Timestamp}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Timestamp.ONE = Timestamp.fromInt(1);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "ONE",
+    "value": "Timestamp.fromInt(1)",
+    "string": "Timestamp.ONE"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Timestamp}</p>",
+    "summary": "<p>@type {Timestamp}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Timestamp.NEG_ONE = Timestamp.fromInt(-1);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "NEG_ONE",
+    "value": "Timestamp.fromInt(-1)",
+    "string": "Timestamp.NEG_ONE"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Timestamp}</p>",
+    "summary": "<p>@type {Timestamp}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Timestamp.MAX_VALUE =\n    Timestamp.fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0);"
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Timestamp}</p>",
+    "summary": "<p>@type {Timestamp}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Timestamp.MIN_VALUE = Timestamp.fromBits(0, 0x80000000 | 0);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "MIN_VALUE",
+    "value": "Timestamp.fromBits(0, 0x80000000 | 0)",
+    "string": "Timestamp.MIN_VALUE"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {Timestamp}</p>",
+    "summary": "<p>@type {Timestamp}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Timestamp.TWO_PWR_24_ = Timestamp.fromInt(1 << 24);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Timestamp",
+    "name": "TWO_PWR_24_",
+    "value": "Timestamp.fromInt(1 << 24)",
+    "string": "Timestamp.TWO_PWR_24_"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Expose.</p>",
+    "summary": "<p>Expose.</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "exports.Timestamp = Timestamp;",
+   "ctx": {
+    "type": "property",
+    "receiver": "exports",
+    "name": "Timestamp",
+    "value": "Timestamp",
+    "string": "exports.Timestamp"
+   }
+  }
+ ],
+ "long": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON Long type."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "low",
+     "description": "the low (signed) 32 bits of the Long."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "high",
+     "description": "the high (signed) 32 bits of the Long."
+    }
+   ],
+   "description": {
+    "full": "<p>Defines a Long class for representing a 64-bit two's-complement<br />integer value, which faithfully simulates the behavior of a Java \"Long\". This<br />implementation is derived from LongLib in GWT.</p>\n\n<p>Constructs a 64-bit two's-complement integer, given its low and high 32-bit<br />values as <em>signed</em> integers.  See the from* functions below for more<br />convenient ways of constructing Longs.</p>\n\n<p>The internal representation of a Long is the two given signed, 32-bit values.<br />We use 32-bit pieces because these are the size of integers on which<br />Javascript performs bit-operations.  For operations like addition and<br />multiplication, we split each number into 16-bit pieces, which can easily be<br />multiplied within Javascript's floating-point representation without overflow<br />or change in sign.</p>\n\n<p>In the algorithms below, we frequently reduce the negative case to the<br />positive case by negating the input(s) and then post-processing the result.<br />Note that we must ALWAYS check specially whether those values are MIN_VALUE<br />(-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as<br />a positive number, it overflows back into a negative).  Not handling this<br />case would often result in infinite recursion.</p>",
+    "summary": "<p>Defines a Long class for representing a 64-bit two's-complement<br />integer value, which faithfully simulates the behavior of a Java \"Long\". This<br />implementation is derived from LongLib in GWT.</p>",
+    "body": "<p>Constructs a 64-bit two's-complement integer, given its low and high 32-bit<br />values as <em>signed</em> integers.  See the from* functions below for more<br />convenient ways of constructing Longs.</p>\n\n<p>The internal representation of a Long is the two given signed, 32-bit values.<br />We use 32-bit pieces because these are the size of integers on which<br />Javascript performs bit-operations.  For operations like addition and<br />multiplication, we split each number into 16-bit pieces, which can easily be<br />multiplied within Javascript's floating-point representation without overflow<br />or change in sign.</p>\n\n<p>In the algorithms below, we frequently reduce the negative case to the<br />positive case by negating the input(s) and then post-processing the result.<br />Note that we must ALWAYS check specially whether those values are MIN_VALUE<br />(-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as<br />a positive number, it overflows back into a negative).  Not handling this<br />case would often result in infinite recursion.</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function Long(low, high) {\n  if(!(this instanceof Long)) return new Long(low, high);\n  \n  this._bsontype = 'Long';",
+   "ctx": {
+    "type": "function",
+    "name": "Long",
+    "string": "Long()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "this.low_ = low | 0;  // force into 32 signed bits.",
+   "ctx": {
+    "type": "property",
+    "receiver": "this",
+    "name": "low_",
+    "value": "low | 0",
+    "string": "this.low_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "this.high_ = high | 0;  // force into 32 signed bits.\n};",
+   "ctx": {
+    "type": "property",
+    "receiver": "this",
+    "name": "high_",
+    "value": "high | 0",
+    "string": "this.high_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the value, assuming it is a 32-bit integer."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the int value.</p>",
+    "summary": "<p>Return the int value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.toInt = function() {\n  return this.low_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "toInt",
+    "string": "Long.prototype.toInt()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the closest floating-point representation to this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the Number value.</p>",
+    "summary": "<p>Return the Number value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.toNumber = function() {\n  return this.high_ * Long.TWO_PWR_32_DBL_ +\n         this.getLowBitsUnsigned();\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "toNumber",
+    "string": "Long.prototype.toNumber()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "the JSON representation."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the JSON value.</p>",
+    "summary": "<p>Return the JSON value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.toJSON = function() {\n  return this.toString();\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "toJSON",
+    "string": "Long.prototype.toJSON()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "[opt_radix]",
+     "description": "the radix in which the text should be written."
+    },
+    {
+     "type": "return",
+     "types": [
+      "String"
+     ],
+     "description": "the textual representation of this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the String value.</p>",
+    "summary": "<p>Return the String value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.toString = function(opt_radix) {\n  var radix = opt_radix || 10;\n  if (radix < 2 || 36 < radix) {\n    throw Error('radix out of range: ' + radix);\n  }\n\n  if (this.isZero()) {\n    return '0';\n  }\n\n  if (this.isNegative()) {\n    if (this.equals(Long.MIN_VALUE)) {\n      // We need to change the Long value before it can be negated, so we remove\n      // the bottom-most digit in this base and then recurse to do the rest.\n      var radixLong = Long.fromNumber(radix);\n      var div = this.div(radixLong);\n      var rem = div.multiply(radixLong).subtract(this);\n      return div.toString(radix) + rem.toInt().toString(radix);\n    } else {\n      return '-' + this.negate().toString(radix);\n    }\n  }\n\n  // Do several (6) digits each time through the loop, so as to\n  // minimize the calls to the very expensive emulated div.\n  var radixToPower = Long.fromNumber(Math.pow(radix, 6));\n\n  var rem = this;\n  var result = '';\n  while (true) {\n    var remDiv = rem.div(radixToPower);\n    var intval = rem.subtract(remDiv.multiply(radixToPower)).toInt();\n    var digits = intval.toString(radix);\n\n    rem = remDiv;\n    if (rem.isZero()) {\n      return digits + result;\n    } else {\n      while (digits.length < 6) {\n        digits = '0' + digits;\n      }\n      result = '' + digits + result;\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "toString",
+    "string": "Long.prototype.toString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the high 32-bits as a signed value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the high 32-bits value.</p>",
+    "summary": "<p>Return the high 32-bits value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.getHighBits = function() {\n  return this.high_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "getHighBits",
+    "string": "Long.prototype.getHighBits()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the low 32-bits as a signed value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the low 32-bits value.</p>",
+    "summary": "<p>Return the low 32-bits value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.getLowBits = function() {\n  return this.low_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "getLowBits",
+    "string": "Long.prototype.getLowBits()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "the low 32-bits as an unsigned value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return the low unsigned 32-bits value.</p>",
+    "summary": "<p>Return the low unsigned 32-bits value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.getLowBitsUnsigned = function() {\n  return (this.low_ >= 0) ?\n      this.low_ : Long.TWO_PWR_32_DBL_ + this.low_;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "getLowBitsUnsigned",
+    "string": "Long.prototype.getLowBitsUnsigned()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "Returns the number of bits needed to represent the absolute value of this Long."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the number of bits needed to represent the absolute value of this Long.</p>",
+    "summary": "<p>Returns the number of bits needed to represent the absolute value of this Long.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.getNumBitsAbs = function() {\n  if (this.isNegative()) {\n    if (this.equals(Long.MIN_VALUE)) {\n      return 64;\n    } else {\n      return this.negate().getNumBitsAbs();\n    }\n  } else {\n    var val = this.high_ != 0 ? this.high_ : this.low_;\n    for (var bit = 31; bit > 0; bit--) {\n      if ((val & (1 << bit)) != 0) {\n        break;\n      }\n    }\n    return this.high_ != 0 ? bit + 33 : bit + 1;\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "getNumBitsAbs",
+    "string": "Long.prototype.getNumBitsAbs()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this value is zero."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this value is zero.</p>",
+    "summary": "<p>Return whether this value is zero.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.isZero = function() {\n  return this.high_ == 0 && this.low_ == 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "isZero",
+    "string": "Long.prototype.isZero()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this value is negative."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this value is negative.</p>",
+    "summary": "<p>Return whether this value is negative.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.isNegative = function() {\n  return this.high_ < 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "isNegative",
+    "string": "Long.prototype.isNegative()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this value is odd."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this value is odd.</p>",
+    "summary": "<p>Return whether this value is odd.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.isOdd = function() {\n  return (this.low_ & 1) == 1;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "isOdd",
+    "string": "Long.prototype.isOdd()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Long equals the other"
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Long equals the other</p>",
+    "summary": "<p>Return whether this Long equals the other</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.equals = function(other) {\n  return (this.high_ == other.high_) && (this.low_ == other.low_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "equals",
+    "string": "Long.prototype.equals()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Long does not equal the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Long does not equal the other.</p>",
+    "summary": "<p>Return whether this Long does not equal the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.notEquals = function(other) {\n  return (this.high_ != other.high_) || (this.low_ != other.low_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "notEquals",
+    "string": "Long.prototype.notEquals()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Long is less than the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Long is less than the other.</p>",
+    "summary": "<p>Return whether this Long is less than the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.lessThan = function(other) {\n  return this.compare(other) < 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "lessThan",
+    "string": "Long.prototype.lessThan()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Long is less than or equal to the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Long is less than or equal to the other.</p>",
+    "summary": "<p>Return whether this Long is less than or equal to the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.lessThanOrEqual = function(other) {\n  return this.compare(other) <= 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "lessThanOrEqual",
+    "string": "Long.prototype.lessThanOrEqual()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Long is greater than the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Long is greater than the other.</p>",
+    "summary": "<p>Return whether this Long is greater than the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.greaterThan = function(other) {\n  return this.compare(other) > 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "greaterThan",
+    "string": "Long.prototype.greaterThan()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "whether this Long is greater than or equal to the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Return whether this Long is greater than or equal to the other.</p>",
+    "summary": "<p>Return whether this Long is greater than or equal to the other.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.greaterThanOrEqual = function(other) {\n  return this.compare(other) >= 0;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "greaterThanOrEqual",
+    "string": "Long.prototype.greaterThanOrEqual()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to compare against."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Boolean"
+     ],
+     "description": "0 if they are the same, 1 if the this is greater, and -1 if the given one is greater."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Compares this Long with the given one.</p>",
+    "summary": "<p>Compares this Long with the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.compare = function(other) {\n  if (this.equals(other)) {\n    return 0;\n  }\n\n  var thisNeg = this.isNegative();\n  var otherNeg = other.isNegative();\n  if (thisNeg && !otherNeg) {\n    return -1;\n  }\n  if (!thisNeg && otherNeg) {\n    return 1;\n  }\n\n  // at this point, the signs are the same, so subtraction will not overflow\n  if (this.subtract(other).isNegative()) {\n    return -1;\n  } else {\n    return 1;\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "compare",
+    "string": "Long.prototype.compare()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the negation of this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>The negation of this value.</p>",
+    "summary": "<p>The negation of this value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.negate = function() {\n  if (this.equals(Long.MIN_VALUE)) {\n    return Long.MIN_VALUE;\n  } else {\n    return this.not().add(Long.ONE);\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "negate",
+    "string": "Long.prototype.negate()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to add to this one."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the sum of this and the given Long."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the sum of this and the given Long.</p>",
+    "summary": "<p>Returns the sum of this and the given Long.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.add = function(other) {\n  // Divide each number into 4 chunks of 16 bits, and then sum the chunks.\n\n  var a48 = this.high_ >>> 16;\n  var a32 = this.high_ & 0xFFFF;\n  var a16 = this.low_ >>> 16;\n  var a00 = this.low_ & 0xFFFF;\n\n  var b48 = other.high_ >>> 16;\n  var b32 = other.high_ & 0xFFFF;\n  var b16 = other.low_ >>> 16;\n  var b00 = other.low_ & 0xFFFF;\n\n  var c48 = 0, c32 = 0, c16 = 0, c00 = 0;\n  c00 += a00 + b00;\n  c16 += c00 >>> 16;\n  c00 &= 0xFFFF;\n  c16 += a16 + b16;\n  c32 += c16 >>> 16;\n  c16 &= 0xFFFF;\n  c32 += a32 + b32;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c48 += a48 + b48;\n  c48 &= 0xFFFF;\n  return Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "add",
+    "string": "Long.prototype.add()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to subtract from this."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the difference of this and the given Long."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the difference of this and the given Long.</p>",
+    "summary": "<p>Returns the difference of this and the given Long.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.subtract = function(other) {\n  return this.add(other.negate());\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "subtract",
+    "string": "Long.prototype.subtract()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long to multiply with this."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the product of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the product of this and the given Long.</p>",
+    "summary": "<p>Returns the product of this and the given Long.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.multiply = function(other) {\n  if (this.isZero()) {\n    return Long.ZERO;\n  } else if (other.isZero()) {\n    return Long.ZERO;\n  }\n\n  if (this.equals(Long.MIN_VALUE)) {\n    return other.isOdd() ? Long.MIN_VALUE : Long.ZERO;\n  } else if (other.equals(Long.MIN_VALUE)) {\n    return this.isOdd() ? Long.MIN_VALUE : Long.ZERO;\n  }\n\n  if (this.isNegative()) {\n    if (other.isNegative()) {\n      return this.negate().multiply(other.negate());\n    } else {\n      return this.negate().multiply(other).negate();\n    }\n  } else if (other.isNegative()) {\n    return this.multiply(other.negate()).negate();\n  }\n\n  // If both Longs are small, use float multiplication\n  if (this.lessThan(Long.TWO_PWR_24_) &&\n      other.lessThan(Long.TWO_PWR_24_)) {\n    return Long.fromNumber(this.toNumber() * other.toNumber());\n  }\n\n  // Divide each Long into 4 chunks of 16 bits, and then add up 4x4 products.\n  // We can skip products that would overflow.\n\n  var a48 = this.high_ >>> 16;\n  var a32 = this.high_ & 0xFFFF;\n  var a16 = this.low_ >>> 16;\n  var a00 = this.low_ & 0xFFFF;\n\n  var b48 = other.high_ >>> 16;\n  var b32 = other.high_ & 0xFFFF;\n  var b16 = other.low_ >>> 16;\n  var b00 = other.low_ & 0xFFFF;\n\n  var c48 = 0, c32 = 0, c16 = 0, c00 = 0;\n  c00 += a00 * b00;\n  c16 += c00 >>> 16;\n  c00 &= 0xFFFF;\n  c16 += a16 * b00;\n  c32 += c16 >>> 16;\n  c16 &= 0xFFFF;\n  c16 += a00 * b16;\n  c32 += c16 >>> 16;\n  c16 &= 0xFFFF;\n  c32 += a32 * b00;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c32 += a16 * b16;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c32 += a00 * b32;\n  c48 += c32 >>> 16;\n  c32 &= 0xFFFF;\n  c48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48;\n  c48 &= 0xFFFF;\n  return Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "multiply",
+    "string": "Long.prototype.multiply()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long by which to divide."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "this Long divided by the given one."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Long divided by the given one.</p>",
+    "summary": "<p>Returns this Long divided by the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.div = function(other) {\n  if (other.isZero()) {\n    throw Error('division by zero');\n  } else if (this.isZero()) {\n    return Long.ZERO;\n  }\n\n  if (this.equals(Long.MIN_VALUE)) {\n    if (other.equals(Long.ONE) ||\n        other.equals(Long.NEG_ONE)) {\n      return Long.MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE\n    } else if (other.equals(Long.MIN_VALUE)) {\n      return Long.ONE;\n    } else {\n      // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.\n      var halfThis = this.shiftRight(1);\n      var approx = halfThis.div(other).shiftLeft(1);\n      if (approx.equals(Long.ZERO)) {\n        return other.isNegative() ? Long.ONE : Long.NEG_ONE;\n      } else {\n        var rem = this.subtract(other.multiply(approx));\n        var result = approx.add(rem.div(other));\n        return result;\n      }\n    }\n  } else if (other.equals(Long.MIN_VALUE)) {\n    return Long.ZERO;\n  }\n\n  if (this.isNegative()) {\n    if (other.isNegative()) {\n      return this.negate().div(other.negate());\n    } else {\n      return this.negate().div(other).negate();\n    }\n  } else if (other.isNegative()) {\n    return this.div(other.negate()).negate();\n  }\n\n  // Repeat the following until the remainder is less than other:  find a\n  // floating-point that approximates remainder / other *from below*, add this\n  // into the result, and subtract it from the remainder.  It is critical that\n  // the approximate value is less than or equal to the real value so that the\n  // remainder never becomes negative.\n  var res = Long.ZERO;\n  var rem = this;\n  while (rem.greaterThanOrEqual(other)) {\n    // Approximate the result of division. This may be a little greater or\n    // smaller than the actual value.\n    var approx = Math.max(1, Math.floor(rem.toNumber() / other.toNumber()));\n\n    // We will tweak the approximate result by changing it in the 48-th digit or\n    // the smallest non-fractional digit, whichever is larger.\n    var log2 = Math.ceil(Math.log(approx) / Math.LN2);\n    var delta = (log2 <= 48) ? 1 : Math.pow(2, log2 - 48);\n\n    // Decrease the approximation until it is smaller than the remainder.  Note\n    // that if it is too large, the product overflows and is negative.\n    var approxRes = Long.fromNumber(approx);\n    var approxRem = approxRes.multiply(other);\n    while (approxRem.isNegative() || approxRem.greaterThan(rem)) {\n      approx -= delta;\n      approxRes = Long.fromNumber(approx);\n      approxRem = approxRes.multiply(other);\n    }\n\n    // We know the answer can't be zero... and actually, zero would cause\n    // infinite recursion since we would make no progress.\n    if (approxRes.isZero()) {\n      approxRes = Long.ONE;\n    }\n\n    res = res.add(approxRes);\n    rem = rem.subtract(approxRem);\n  }\n  return res;\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "div",
+    "string": "Long.prototype.div()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "Long by which to mod."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "this Long modulo the given one."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Long modulo the given one.</p>",
+    "summary": "<p>Returns this Long modulo the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.modulo = function(other) {\n  return this.subtract(this.div(other).multiply(other));\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "modulo",
+    "string": "Long.prototype.modulo()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the bitwise-NOT of this value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>The bitwise-NOT of this value.</p>",
+    "summary": "<p>The bitwise-NOT of this value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.not = function() {\n  return Long.fromBits(~this.low_, ~this.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "not",
+    "string": "Long.prototype.not()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "the Long with which to AND."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the bitwise-AND of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the bitwise-AND of this Long and the given one.</p>",
+    "summary": "<p>Returns the bitwise-AND of this Long and the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.and = function(other) {\n  return Long.fromBits(this.low_ & other.low_, this.high_ & other.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "and",
+    "string": "Long.prototype.and()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "the Long with which to OR."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the bitwise-OR of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the bitwise-OR of this Long and the given one.</p>",
+    "summary": "<p>Returns the bitwise-OR of this Long and the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.or = function(other) {\n  return Long.fromBits(this.low_ | other.low_, this.high_ | other.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "or",
+    "string": "Long.prototype.or()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Long"
+     ],
+     "name": "other",
+     "description": "the Long with which to XOR."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the bitwise-XOR of this and the other."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns the bitwise-XOR of this Long and the given one.</p>",
+    "summary": "<p>Returns the bitwise-XOR of this Long and the given one.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.xor = function(other) {\n  return Long.fromBits(this.low_ ^ other.low_, this.high_ ^ other.high_);\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "xor",
+    "string": "Long.prototype.xor()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numBits",
+     "description": "the number of bits by which to shift."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "this shifted to the left by the given amount."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Long with bits shifted to the left by the given amount.</p>",
+    "summary": "<p>Returns this Long with bits shifted to the left by the given amount.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.shiftLeft = function(numBits) {\n  numBits &= 63;\n  if (numBits == 0) {\n    return this;\n  } else {\n    var low = this.low_;\n    if (numBits < 32) {\n      var high = this.high_;\n      return Long.fromBits(\n                 low << numBits,\n                 (high << numBits) | (low >>> (32 - numBits)));\n    } else {\n      return Long.fromBits(0, low << (numBits - 32));\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "shiftLeft",
+    "string": "Long.prototype.shiftLeft()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numBits",
+     "description": "the number of bits by which to shift."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "this shifted to the right by the given amount."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Long with bits shifted to the right by the given amount.</p>",
+    "summary": "<p>Returns this Long with bits shifted to the right by the given amount.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.shiftRight = function(numBits) {\n  numBits &= 63;\n  if (numBits == 0) {\n    return this;\n  } else {\n    var high = this.high_;\n    if (numBits < 32) {\n      var low = this.low_;\n      return Long.fromBits(\n                 (low >>> numBits) | (high << (32 - numBits)),\n                 high >> numBits);\n    } else {\n      return Long.fromBits(\n                 high >> (numBits - 32),\n                 high >= 0 ? 0 : -1);\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "shiftRight",
+    "string": "Long.prototype.shiftRight()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numBits",
+     "description": "the number of bits by which to shift."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "this shifted to the right by the given amount, with zeros placed into the new leading bits."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns this Long with bits shifted to the right by the given amount, with the new top bits matching the current sign bit.</p>",
+    "summary": "<p>Returns this Long with bits shifted to the right by the given amount, with the new top bits matching the current sign bit.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.prototype.shiftRightUnsigned = function(numBits) {\n  numBits &= 63;\n  if (numBits == 0) {\n    return this;\n  } else {\n    var high = this.high_;\n    if (numBits < 32) {\n      var low = this.low_;\n      return Long.fromBits(\n                 (low >>> numBits) | (high << (32 - numBits)),\n                 high >>> numBits);\n    } else if (numBits == 32) {\n      return Long.fromBits(high, 0);\n    } else {\n      return Long.fromBits(high >>> (numBits - 32), 0);\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "constructor": "Long",
+    "cons": "Long",
+    "name": "shiftRightUnsigned",
+    "string": "Long.prototype.shiftRightUnsigned()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "value",
+     "description": "the 32-bit integer in question."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the corresponding Long value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Long representing the given (32-bit) integer value.</p>",
+    "summary": "<p>Returns a Long representing the given (32-bit) integer value.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.fromInt = function(value) {\n  if (-128 <= value && value < 128) {\n    var cachedObj = Long.INT_CACHE_[value];\n    if (cachedObj) {\n      return cachedObj;\n    }\n  }\n\n  var obj = new Long(value | 0, value < 0 ? -1 : 0);\n  if (-128 <= value && value < 128) {\n    Long.INT_CACHE_[value] = obj;\n  }\n  return obj;\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "Long",
+    "name": "fromInt",
+    "string": "Long.fromInt()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "value",
+     "description": "the number in question."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the corresponding Long value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Long representing the given value, provided that it is a finite number. Otherwise, zero is returned.</p>",
+    "summary": "<p>Returns a Long representing the given value, provided that it is a finite number. Otherwise, zero is returned.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.fromNumber = function(value) {\n  if (isNaN(value) || !isFinite(value)) {\n    return Long.ZERO;\n  } else if (value <= -Long.TWO_PWR_63_DBL_) {\n    return Long.MIN_VALUE;\n  } else if (value + 1 >= Long.TWO_PWR_63_DBL_) {\n    return Long.MAX_VALUE;\n  } else if (value < 0) {\n    return Long.fromNumber(-value).negate();\n  } else {\n    return new Long(\n               (value % Long.TWO_PWR_32_DBL_) | 0,\n               (value / Long.TWO_PWR_32_DBL_) | 0);\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "Long",
+    "name": "fromNumber",
+    "string": "Long.fromNumber()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "lowBits",
+     "description": "the low 32-bits."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "highBits",
+     "description": "the high 32-bits."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the corresponding Long value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Long representing the 64-bit integer that comes by concatenating the given high and low bits. Each is assumed to use 32 bits.</p>",
+    "summary": "<p>Returns a Long representing the 64-bit integer that comes by concatenating the given high and low bits. Each is assumed to use 32 bits.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.fromBits = function(lowBits, highBits) {\n  return new Long(lowBits, highBits);\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "Long",
+    "name": "fromBits",
+    "string": "Long.fromBits()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "String"
+     ],
+     "name": "str",
+     "description": "the textual representation of the Long."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "opt_radix",
+     "description": "the radix in which the text is written."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Long"
+     ],
+     "description": "the corresponding Long value."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Returns a Long representation of the given string, written using the given radix.</p>",
+    "summary": "<p>Returns a Long representation of the given string, written using the given radix.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "Long.fromString = function(str, opt_radix) {\n  if (str.length == 0) {\n    throw Error('number format error: empty string');\n  }\n\n  var radix = opt_radix || 10;\n  if (radix < 2 || 36 < radix) {\n    throw Error('radix out of range: ' + radix);\n  }\n\n  if (str.charAt(0) == '-') {\n    return Long.fromString(str.substring(1), radix).negate();\n  } else if (str.indexOf('-') >= 0) {\n    throw Error('number format error: interior \"-\" character: ' + str);\n  }\n\n  // Do several (8) digits each time through the loop, so as to\n  // minimize the calls to the very expensive emulated div.\n  var radixToPower = Long.fromNumber(Math.pow(radix, 8));\n\n  var result = Long.ZERO;\n  for (var i = 0; i < str.length; i += 8) {\n    var size = Math.min(8, str.length - i);\n    var value = parseInt(str.substring(i, i + size), radix);\n    if (size < 8) {\n      var power = Long.fromNumber(Math.pow(radix, size));\n      result = result.multiply(power).add(Long.fromNumber(value));\n    } else {\n      result = result.multiply(radixToPower);\n      result = result.add(Long.fromNumber(value));\n    }\n  }\n  return result;\n};\n\n// NOTE: Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the\n// from* methods on which they depend.",
+   "ctx": {
+    "type": "method",
+    "receiver": "Long",
+    "name": "fromString",
+    "string": "Long.fromString()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "type",
+     "types": [
+      "Object"
+     ]
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>A cache of the Long representations of small integer values.</p>",
+    "summary": "<p>A cache of the Long representations of small integer values.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.INT_CACHE_ = {};\n\n// NOTE: the compiler should inline these constant values below and then remove\n// these variables, so there should be no runtime penalty for these.",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "INT_CACHE_",
+    "value": "{}",
+    "string": "Long.INT_CACHE_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "type",
+     "types": [
+      "number"
+     ]
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Number used repeated below in calculations.  This must appear before the<br />first call to any from* function below.</p>",
+    "summary": "<p>Number used repeated below in calculations.  This must appear before the<br />first call to any from* function below.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_16_DBL_ = 1 << 16;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_16_DBL_",
+    "value": "1 << 16",
+    "string": "Long.TWO_PWR_16_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_24_DBL_ = 1 << 24;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_24_DBL_",
+    "value": "1 << 24",
+    "string": "Long.TWO_PWR_24_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_32_DBL_ = Long.TWO_PWR_16_DBL_ * Long.TWO_PWR_16_DBL_;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_32_DBL_",
+    "value": "Long.TWO_PWR_16_DBL_ * Long.TWO_PWR_16_DBL_",
+    "string": "Long.TWO_PWR_32_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_31_DBL_ = Long.TWO_PWR_32_DBL_ / 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_31_DBL_",
+    "value": "Long.TWO_PWR_32_DBL_ / 2",
+    "string": "Long.TWO_PWR_31_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_48_DBL_ = Long.TWO_PWR_32_DBL_ * Long.TWO_PWR_16_DBL_;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_48_DBL_",
+    "value": "Long.TWO_PWR_32_DBL_ * Long.TWO_PWR_16_DBL_",
+    "string": "Long.TWO_PWR_48_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_64_DBL_ = Long.TWO_PWR_32_DBL_ * Long.TWO_PWR_32_DBL_;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_64_DBL_",
+    "value": "Long.TWO_PWR_32_DBL_ * Long.TWO_PWR_32_DBL_",
+    "string": "Long.TWO_PWR_64_DBL_"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {number}</p>",
+    "summary": "<p>@type {number}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_63_DBL_ = Long.TWO_PWR_64_DBL_ / 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_63_DBL_",
+    "value": "Long.TWO_PWR_64_DBL_ / 2",
+    "string": "Long.TWO_PWR_63_DBL_"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Long}</p>",
+    "summary": "<p>@type {Long}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Long.ZERO = Long.fromInt(0);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "ZERO",
+    "value": "Long.fromInt(0)",
+    "string": "Long.ZERO"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Long}</p>",
+    "summary": "<p>@type {Long}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Long.ONE = Long.fromInt(1);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "ONE",
+    "value": "Long.fromInt(1)",
+    "string": "Long.ONE"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Long}</p>",
+    "summary": "<p>@type {Long}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Long.NEG_ONE = Long.fromInt(-1);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "NEG_ONE",
+    "value": "Long.fromInt(-1)",
+    "string": "Long.NEG_ONE"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Long}</p>",
+    "summary": "<p>@type {Long}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Long.MAX_VALUE =\n    Long.fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0);"
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>@type {Long}</p>",
+    "summary": "<p>@type {Long}</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "Long.MIN_VALUE = Long.fromBits(0, 0x80000000 | 0);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "MIN_VALUE",
+    "value": "Long.fromBits(0, 0x80000000 | 0)",
+    "string": "Long.MIN_VALUE"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@type {Long}</p>",
+    "summary": "<p>@type {Long}</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "Long.TWO_PWR_24_ = Long.fromInt(1 << 24);",
+   "ctx": {
+    "type": "property",
+    "receiver": "Long",
+    "name": "TWO_PWR_24_",
+    "value": "Long.fromInt(1 << 24)",
+    "string": "Long.TWO_PWR_24_"
+   }
+  },
+  {
+   "tags": [],
+   "description": {
+    "full": "<p>Expose.</p>",
+    "summary": "<p>Expose.</p>",
+    "body": ""
+   },
+   "ignore": false,
+   "code": "exports.Long = Long;",
+   "ctx": {
+    "type": "property",
+    "receiver": "exports",
+    "name": "Long",
+    "value": "Long",
+    "string": "exports.Long"
+   }
+  }
+ ],
+ "bson": [
+  {
+   "tags": [
+    {
+     "type": "class",
+     "string": "Represents the BSON Parser"
+    },
+    {
+     "type": "return",
+     "types": [
+      "BSON"
+     ],
+     "description": "instance of BSON Parser."
+    }
+   ],
+   "description": {
+    "full": "<p>Create a new BSON instance</p>",
+    "summary": "<p>Create a new BSON instance</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "function BSON () {};",
+   "ctx": {
+    "type": "function",
+    "name": "BSON",
+    "string": "BSON()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "// BSON MAX VALUES\nBSON.BSON_INT32_MAX = 0x7FFFFFFF;\nBSON.BSON_INT32_MIN = -0x80000000;\n\nBSON.BSON_INT64_MAX = Math.pow(2, 63) - 1;\nBSON.BSON_INT64_MIN = -Math.pow(2, 63);\n\n// JS MAX PRECISE VALUES\nBSON.JS_INT_MAX = 0x20000000000000;  // Any integer up to 2^53 can be precisely represented by a double.\nBSON.JS_INT_MIN = -0x20000000000000;  // Any integer down to -2^53 can be precisely represented by a double.\n\n// Internal long versions\nvar JS_INT_MAX_LONG = Long.fromNumber(0x20000000000000);  // Any integer up to 2^53 can be precisely represented by a double.\nvar JS_INT_MIN_LONG = Long.fromNumber(-0x20000000000000);  // Any integer down to -2^53 can be precisely represented by a double."
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_NUMBER"
+    }
+   ],
+   "description": {
+    "full": "<p>Number BSON Type</p>",
+    "summary": "<p>Number BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_NUMBER = 1;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_NUMBER",
+    "value": "1",
+    "string": "BSON.BSON_DATA_NUMBER"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_STRING"
+    }
+   ],
+   "description": {
+    "full": "<p>String BSON Type</p>",
+    "summary": "<p>String BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_STRING = 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_STRING",
+    "value": "2",
+    "string": "BSON.BSON_DATA_STRING"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_OBJECT"
+    }
+   ],
+   "description": {
+    "full": "<p>Object BSON Type</p>",
+    "summary": "<p>Object BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_OBJECT = 3;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_OBJECT",
+    "value": "3",
+    "string": "BSON.BSON_DATA_OBJECT"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_ARRAY"
+    }
+   ],
+   "description": {
+    "full": "<p>Array BSON Type</p>",
+    "summary": "<p>Array BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_ARRAY = 4;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_ARRAY",
+    "value": "4",
+    "string": "BSON.BSON_DATA_ARRAY"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_BINARY"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary BSON Type</p>",
+    "summary": "<p>Binary BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_BINARY = 5;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_BINARY",
+    "value": "5",
+    "string": "BSON.BSON_DATA_BINARY"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_UNDEFINED"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary BSON Type</p>",
+    "summary": "<p>Binary BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_UNDEFINED = 6;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_UNDEFINED",
+    "value": "6",
+    "string": "BSON.BSON_DATA_UNDEFINED"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_OID"
+    }
+   ],
+   "description": {
+    "full": "<p>ObjectID BSON Type</p>",
+    "summary": "<p>ObjectID BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_OID = 7;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_OID",
+    "value": "7",
+    "string": "BSON.BSON_DATA_OID"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_BOOLEAN"
+    }
+   ],
+   "description": {
+    "full": "<p>Boolean BSON Type</p>",
+    "summary": "<p>Boolean BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_BOOLEAN = 8;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_BOOLEAN",
+    "value": "8",
+    "string": "BSON.BSON_DATA_BOOLEAN"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_DATE"
+    }
+   ],
+   "description": {
+    "full": "<p>Date BSON Type</p>",
+    "summary": "<p>Date BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_DATE = 9;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_DATE",
+    "value": "9",
+    "string": "BSON.BSON_DATA_DATE"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_NULL"
+    }
+   ],
+   "description": {
+    "full": "<p>null BSON Type</p>",
+    "summary": "<p>null BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_NULL = 10;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_NULL",
+    "value": "10",
+    "string": "BSON.BSON_DATA_NULL"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_REGEXP"
+    }
+   ],
+   "description": {
+    "full": "<p>RegExp BSON Type</p>",
+    "summary": "<p>RegExp BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_REGEXP = 11;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_REGEXP",
+    "value": "11",
+    "string": "BSON.BSON_DATA_REGEXP"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_CODE"
+    }
+   ],
+   "description": {
+    "full": "<p>Code BSON Type</p>",
+    "summary": "<p>Code BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_CODE = 13;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_CODE",
+    "value": "13",
+    "string": "BSON.BSON_DATA_CODE"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_SYMBOL"
+    }
+   ],
+   "description": {
+    "full": "<p>Symbol BSON Type</p>",
+    "summary": "<p>Symbol BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_SYMBOL = 14;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_SYMBOL",
+    "value": "14",
+    "string": "BSON.BSON_DATA_SYMBOL"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_CODE_W_SCOPE"
+    }
+   ],
+   "description": {
+    "full": "<p>Code with Scope BSON Type</p>",
+    "summary": "<p>Code with Scope BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_CODE_W_SCOPE = 15;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_CODE_W_SCOPE",
+    "value": "15",
+    "string": "BSON.BSON_DATA_CODE_W_SCOPE"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_INT"
+    }
+   ],
+   "description": {
+    "full": "<p>32 bit Integer BSON Type</p>",
+    "summary": "<p>32 bit Integer BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_INT = 16;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_INT",
+    "value": "16",
+    "string": "BSON.BSON_DATA_INT"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_TIMESTAMP"
+    }
+   ],
+   "description": {
+    "full": "<p>Timestamp BSON Type</p>",
+    "summary": "<p>Timestamp BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_TIMESTAMP = 17;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_TIMESTAMP",
+    "value": "17",
+    "string": "BSON.BSON_DATA_TIMESTAMP"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_LONG"
+    }
+   ],
+   "description": {
+    "full": "<p>Long BSON Type</p>",
+    "summary": "<p>Long BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_LONG = 18;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_LONG",
+    "value": "18",
+    "string": "BSON.BSON_DATA_LONG"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_MIN_KEY"
+    }
+   ],
+   "description": {
+    "full": "<p>MinKey BSON Type</p>",
+    "summary": "<p>MinKey BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_MIN_KEY = 0xff;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_MIN_KEY",
+    "value": "0xff",
+    "string": "BSON.BSON_DATA_MIN_KEY"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_DATA_MAX_KEY"
+    }
+   ],
+   "description": {
+    "full": "<p>MaxKey BSON Type</p>",
+    "summary": "<p>MaxKey BSON Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_DATA_MAX_KEY = 0x7f;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_DATA_MAX_KEY",
+    "value": "0x7f",
+    "string": "BSON.BSON_DATA_MAX_KEY"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_BINARY_SUBTYPE_DEFAULT"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary Default Type</p>",
+    "summary": "<p>Binary Default Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_BINARY_SUBTYPE_DEFAULT = 0;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_BINARY_SUBTYPE_DEFAULT",
+    "value": "0",
+    "string": "BSON.BSON_BINARY_SUBTYPE_DEFAULT"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_BINARY_SUBTYPE_FUNCTION"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary Function Type</p>",
+    "summary": "<p>Binary Function Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_BINARY_SUBTYPE_FUNCTION = 1;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_BINARY_SUBTYPE_FUNCTION",
+    "value": "1",
+    "string": "BSON.BSON_BINARY_SUBTYPE_FUNCTION"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_BINARY_SUBTYPE_BYTE_ARRAY"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary Byte Array Type</p>",
+    "summary": "<p>Binary Byte Array Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_BINARY_SUBTYPE_BYTE_ARRAY = 2;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_BINARY_SUBTYPE_BYTE_ARRAY",
+    "value": "2",
+    "string": "BSON.BSON_BINARY_SUBTYPE_BYTE_ARRAY"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_BINARY_SUBTYPE_UUID"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary UUID Type</p>",
+    "summary": "<p>Binary UUID Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_BINARY_SUBTYPE_UUID = 3;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_BINARY_SUBTYPE_UUID",
+    "value": "3",
+    "string": "BSON.BSON_BINARY_SUBTYPE_UUID"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_BINARY_SUBTYPE_MD5"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary MD5 Type</p>",
+    "summary": "<p>Binary MD5 Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_BINARY_SUBTYPE_MD5 = 4;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_BINARY_SUBTYPE_MD5",
+    "value": "4",
+    "string": "BSON.BSON_BINARY_SUBTYPE_MD5"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "classconstant",
+     "string": "BSON_BINARY_SUBTYPE_USER_DEFINED"
+    }
+   ],
+   "description": {
+    "full": "<p>Binary User Defined Type</p>",
+    "summary": "<p>Binary User Defined Type</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.BSON_BINARY_SUBTYPE_USER_DEFINED = 128;",
+   "ctx": {
+    "type": "property",
+    "receiver": "BSON",
+    "name": "BSON_BINARY_SUBTYPE_USER_DEFINED",
+    "value": "128",
+    "string": "BSON.BSON_BINARY_SUBTYPE_USER_DEFINED"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "object",
+     "description": "the Javascript object to calculate the BSON byte size for."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "[serializeFunctions]",
+     "description": "serialize all functions in the object **(default:false)**."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the number of bytes the BSON object will take up."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Calculate the bson size for a passed in Javascript object.</p>",
+    "summary": "<p>Calculate the bson size for a passed in Javascript object.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.calculateObjectSize = function calculateObjectSize(object, serializeFunctions) {\n  var totalLength = (4 + 1);\n\n  if(Array.isArray(object)) {\n    for(var i = 0; i < object.length; i++) {\n      totalLength += calculateElement(i.toString(), object[i], serializeFunctions)\n    }\n  } else {\n\t\t// If we have toBSON defined, override the current object\n\t\tif(object.toBSON) {\n\t\t\tobject = object.toBSON();\n\t\t}\n\n\t\t// Calculate size\n    for(var key in object) {\n      totalLength += calculateElement(key, object[key], serializeFunctions)\n    }\n  }\n\n  return totalLength;\n}",
+   "ctx": {
+    "type": "method",
+    "receiver": "BSON",
+    "name": "calculateObjectSize",
+    "string": "BSON.calculateObjectSize()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "function calculateElement(name, value, serializeFunctions) {\n  var isBuffer = typeof Buffer !== 'undefined';\n  \n  // If we have toBSON defined, override the current object\n  if(value && value.toBSON){\n        value = value.toBSON();\n  }\n  \n  switch(typeof value) {\n    case 'string':\n      return 1 + (!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1 + 4 + (!isBuffer ? numberOfBytes(value) : Buffer.byteLength(value, 'utf8')) + 1;\n    case 'number':\n      if(Math.floor(value) === value && value >= BSON.JS_INT_MIN && value <= BSON.JS_INT_MAX) {\n        if(value >= BSON.BSON_INT32_MIN && value <= BSON.BSON_INT32_MAX) { // 32 bit\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (4 + 1);\n        } else {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (8 + 1);\n        }\n      } else {  // 64 bit\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (8 + 1);\n      }\n    case 'undefined':\n      return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (1);\n    case 'boolean':\n      return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (1 + 1);\n    case 'object':\n      if(value == null || value instanceof MinKey || value instanceof MaxKey || value['_bsontype'] == 'MinKey' || value['_bsontype'] == 'MaxKey') {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (1);\n      } else if(value instanceof ObjectID || value['_bsontype'] == 'ObjectID') {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (12 + 1);\n      } else if(value instanceof Date || isDate(value)) {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (8 + 1);\n      } else if(typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (1 + 4 + 1) + value.length;\n      } else if(value instanceof Long || value instanceof Double || value instanceof Timestamp\n          || value['_bsontype'] == 'Long' || value['_bsontype'] == 'Double' || value['_bsontype'] == 'Timestamp') {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (8 + 1);\n      } else if(value instanceof Code || value['_bsontype'] == 'Code') {\n        // Calculate size depending on the availability of a scope\n        if(value.scope != null && Object.keys(value.scope).length > 0) {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + 4 + 4 + (!isBuffer ? numberOfBytes(value.code.toString()) : Buffer.byteLength(value.code.toString(), 'utf8')) + 1 + BSON.calculateObjectSize(value.scope, serializeFunctions);\n        } else {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + 4 + (!isBuffer ? numberOfBytes(value.code.toString()) : Buffer.byteLength(value.code.toString(), 'utf8')) + 1;\n        }\n      } else if(value instanceof Binary || value['_bsontype'] == 'Binary') {\n        // Check what kind of subtype we have\n        if(value.sub_type == Binary.SUBTYPE_BYTE_ARRAY) {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (value.position + 1 + 4 + 1 + 4);\n        } else {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + (value.position + 1 + 4 + 1);\n        }\n      } else if(value instanceof Symbol || value['_bsontype'] == 'Symbol') {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + ((!isBuffer ? numberOfBytes(value.value) : Buffer.byteLength(value.value, 'utf8')) + 4 + 1 + 1);\n      } else if(value instanceof DBRef || value['_bsontype'] == 'DBRef') {\n        // Set up correct object for serialization\n        var ordered_values = {\n            '$ref': value.namespace\n          , '$id' : value.oid\n        };\n\n        // Add db reference if it exists\n        if(null != value.db) {\n          ordered_values['$db'] = value.db;\n        }\n\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + BSON.calculateObjectSize(ordered_values, serializeFunctions);\n      } else if(value instanceof RegExp || Object.prototype.toString.call(value) === '[object RegExp]') {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + (!isBuffer ? numberOfBytes(value.source) : Buffer.byteLength(value.source, 'utf8')) + 1\n            + (value.global ? 1 : 0) + (value.ignoreCase ? 1 : 0) + (value.multiline ? 1 : 0) + 1\n      } else {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + BSON.calculateObjectSize(value, serializeFunctions) + 1;\n      }\n    case 'function':\n      // WTF for 0.4.X where typeof /someregexp/ === 'function'\n      if(value instanceof RegExp || Object.prototype.toString.call(value) === '[object RegExp]' || String.call(value) == '[object RegExp]') {\n        return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + (!isBuffer ? numberOfBytes(value.source) : Buffer.byteLength(value.source, 'utf8')) + 1\n          + (value.global ? 1 : 0) + (value.ignoreCase ? 1 : 0) + (value.multiline ? 1 : 0) + 1\n      } else {\n        if(serializeFunctions && value.scope != null && Object.keys(value.scope).length > 0) {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + 4 + 4 + (!isBuffer ? numberOfBytes(value.toString()) : Buffer.byteLength(value.toString(), 'utf8')) + 1 + BSON.calculateObjectSize(value.scope, serializeFunctions);\n        } else if(serializeFunctions) {\n          return (name != null ? ((!isBuffer ? numberOfBytes(name) : Buffer.byteLength(name, 'utf8')) + 1) : 0) + 1 + 4 + (!isBuffer ? numberOfBytes(value.toString()) : Buffer.byteLength(value.toString(), 'utf8')) + 1;\n        }\n      }\n  }\n\n  return 0;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "calculateElement",
+    "string": "calculateElement()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "object",
+     "description": "the Javascript object to serialize."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "checkKeys",
+     "description": "the serializer will check if keys are valid."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "buffer",
+     "description": "the Buffer you pre-allocated to store the serialized BSON object."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "index",
+     "description": "the index in the buffer where we wish to start serializing into."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "serializeFunctions",
+     "description": "serialize the javascript functions **(default:false)**."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the new write index in the Buffer."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Serialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization.</p>",
+    "summary": "<p>Serialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.serializeWithBufferAndIndex = function serializeWithBufferAndIndex(object, checkKeys, buffer, index, serializeFunctions) {\n  // Default setting false\n  serializeFunctions = serializeFunctions == null ? false : serializeFunctions;\n  // Write end information (length of the object)\n  var size = buffer.length;\n  // Write the size of the object\n  buffer[index++] = size & 0xff;\n  buffer[index++] = (size >> 8) & 0xff;\n  buffer[index++] = (size >> 16) & 0xff;\n  buffer[index++] = (size >> 24) & 0xff;\n  return serializeObject(object, checkKeys, buffer, index, serializeFunctions) - 1;\n}",
+   "ctx": {
+    "type": "method",
+    "receiver": "BSON",
+    "name": "serializeWithBufferAndIndex",
+    "string": "BSON.serializeWithBufferAndIndex()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var serializeObject = function(object, checkKeys, buffer, index, serializeFunctions) {\n  if(object.toBSON) {\n    if(typeof object.toBSON != 'function') throw new Error(\"toBSON is not a function\");\n    object = object.toBSON();\n    if(object != null && typeof object != 'object') throw new Error(\"toBSON function did not return an object\");\n  }\n\n  // Process the object\n  if(Array.isArray(object)) {\n    for(var i = 0; i < object.length; i++) {\n      index = packElement(i.toString(), object[i], checkKeys, buffer, index, serializeFunctions);\n    }\n  } else {\n\t\t// If we have toBSON defined, override the current object\n\t\tif(object.toBSON) {\n\t\t\tobject = object.toBSON();\n\t\t}\n\n\t\t// Serialize the object\n    for(var key in object) {\n      // Check the key and throw error if it's illegal\n      if (key != '$db' && key != '$ref' && key != '$id') {\n        // dollars and dots ok\n        BSON.checkKey(key, !checkKeys);\n      }\n\n      // Pack the element\n      index = packElement(key, object[key], checkKeys, buffer, index, serializeFunctions);\n    }\n  }\n\n  // Write zero\n  buffer[index++] = 0;\n  return index;\n}\n\nvar stringToBytes = function(str) {\n  var ch, st, re = [];\n  for (var i = 0; i < str.length; i++ ) {\n    ch = str.charCodeAt(i);  // get char\n    st = [];                 // set up \"stack\"\n    do {\n      st.push( ch & 0xFF );  // push byte to stack\n      ch = ch >> 8;          // shift value down by 1 byte\n    }\n    while ( ch );\n    // add stack contents to result\n    // done because chars have \"wrong\" endianness\n    re = re.concat( st.reverse() );\n  }\n  // return an array of bytes\n  return re;\n}\n\nvar numberOfBytes = function(str) {\n  var ch, st, re = 0;\n  for (var i = 0; i < str.length; i++ ) {\n    ch = str.charCodeAt(i);  // get char\n    st = [];                 // set up \"stack\"\n    do {\n      st.push( ch & 0xFF );  // push byte to stack\n      ch = ch >> 8;          // shift value down by 1 byte\n    }\n    while ( ch );\n    // add stack contents to result\n    // done because chars have \"wrong\" endianness\n    re = re + st.length;\n  }\n  // return an array of bytes\n  return re;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "serializeObject",
+    "string": "serializeObject()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var writeToTypedArray = function(buffer, string, index) {\n  var bytes = stringToBytes(string);\n  for(var i = 0; i < bytes.length; i++) {\n    buffer[index + i] = bytes[i];\n  }\n  return bytes.length;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "writeToTypedArray",
+    "string": "writeToTypedArray()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var supportsBuffer = typeof Buffer != 'undefined';",
+   "ctx": {
+    "type": "declaration",
+    "name": "supportsBuffer",
+    "value": "typeof Buffer != 'undefined'",
+    "string": "supportsBuffer"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var packElement = function(name, value, checkKeys, buffer, index, serializeFunctions) {\n\t\n  // If we have toBSON defined, override the current object\n  if(value && value.toBSON){\n        value = value.toBSON();\n  }\n  \n  var startIndex = index;\n\n  switch(typeof value) {\n    case 'string':\n      // console.log(\"+++++++++++ index string:: \" + index)\n      // Encode String type\n      buffer[index++] = BSON.BSON_DATA_STRING;\n      // Number of written bytes\n      var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n      // Encode the name\n      index = index + numberOfWrittenBytes + 1;\n      buffer[index - 1] = 0;\n\n      // Calculate size\n      var size = supportsBuffer ? Buffer.byteLength(value) + 1 : numberOfBytes(value) + 1;\n      // console.log(\"====== key :: \" + name + \" size ::\" + size)\n      // Write the size of the string to buffer\n      buffer[index + 3] = (size >> 24) & 0xff;\n      buffer[index + 2] = (size >> 16) & 0xff;\n      buffer[index + 1] = (size >> 8) & 0xff;\n      buffer[index] = size & 0xff;\n      // Ajust the index\n      index = index + 4;\n      // Write the string\n      supportsBuffer ? buffer.write(value, index, 'utf8') : writeToTypedArray(buffer, value, index);\n      // Update index\n      index = index + size - 1;\n      // Write zero\n      buffer[index++] = 0;\n      // Return index\n      return index;\n    case 'number':\n      // We have an integer value\n      if(Math.floor(value) === value && value >= BSON.JS_INT_MIN && value <= BSON.JS_INT_MAX) {\n        // If the value fits in 32 bits encode as int, if it fits in a double\n        // encode it as a double, otherwise long\n        if(value >= BSON.BSON_INT32_MIN && value <= BSON.BSON_INT32_MAX) {\n          // Set int type 32 bits or less\n          buffer[index++] = BSON.BSON_DATA_INT;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          // Write the int value\n          buffer[index++] = value & 0xff;\n          buffer[index++] = (value >> 8) & 0xff;\n          buffer[index++] = (value >> 16) & 0xff;\n          buffer[index++] = (value >> 24) & 0xff;\n        } else if(value >= BSON.JS_INT_MIN && value <= BSON.JS_INT_MAX) {\n          // Encode as double\n          buffer[index++] = BSON.BSON_DATA_NUMBER;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          // Write float\n          writeIEEE754(buffer, value, index, 'little', 52, 8);\n          // Ajust index\n          index = index + 8;\n        } else {\n          // Set long type\n          buffer[index++] = BSON.BSON_DATA_LONG;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          var longVal = Long.fromNumber(value);\n          var lowBits = longVal.getLowBits();\n          var highBits = longVal.getHighBits();\n          // Encode low bits\n          buffer[index++] = lowBits & 0xff;\n          buffer[index++] = (lowBits >> 8) & 0xff;\n          buffer[index++] = (lowBits >> 16) & 0xff;\n          buffer[index++] = (lowBits >> 24) & 0xff;\n          // Encode high bits\n          buffer[index++] = highBits & 0xff;\n          buffer[index++] = (highBits >> 8) & 0xff;\n          buffer[index++] = (highBits >> 16) & 0xff;\n          buffer[index++] = (highBits >> 24) & 0xff;\n        }\n      } else {\n        // Encode as double\n        buffer[index++] = BSON.BSON_DATA_NUMBER;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Write float\n        writeIEEE754(buffer, value, index, 'little', 52, 8);\n        // Ajust index\n        index = index + 8;\n      }\n\n      return index;\n    case 'undefined':\n      // Set long type\n      buffer[index++] = BSON.BSON_DATA_NULL;\n      // Number of written bytes\n      var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n      // Encode the name\n      index = index + numberOfWrittenBytes + 1;\n      buffer[index - 1] = 0;\n      return index;\n    case 'boolean':\n      // Write the type\n      buffer[index++] = BSON.BSON_DATA_BOOLEAN;\n      // Number of written bytes\n      var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n      // Encode the name\n      index = index + numberOfWrittenBytes + 1;\n      buffer[index - 1] = 0;\n      // Encode the boolean value\n      buffer[index++] = value ? 1 : 0;\n      return index;\n    case 'object':\n      if(value === null || value instanceof MinKey || value instanceof MaxKey\n          || value['_bsontype'] == 'MinKey' || value['_bsontype'] == 'MaxKey') {\n        // Write the type of either min or max key\n        if(value === null) {\n          buffer[index++] = BSON.BSON_DATA_NULL;\n        } else if(value instanceof MinKey) {\n          buffer[index++] = BSON.BSON_DATA_MIN_KEY;\n        } else {\n          buffer[index++] = BSON.BSON_DATA_MAX_KEY;\n        }\n\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        return index;\n      } else if(value instanceof ObjectID || value['_bsontype'] == 'ObjectID') {\n        // console.log(\"+++++++++++ index OBJECTID:: \" + index)\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_OID;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n\n        // Write objectid\n        supportsBuffer ? buffer.write(value.id, index, 'binary') : writeToTypedArray(buffer, value.id, index);\n        // Ajust index\n        index = index + 12;\n        return index;\n      } else if(value instanceof Date || isDate(value)) {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_DATE;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n\n        // Write the date\n        var dateInMilis = Long.fromNumber(value.getTime());\n        var lowBits = dateInMilis.getLowBits();\n        var highBits = dateInMilis.getHighBits();\n        // Encode low bits\n        buffer[index++] = lowBits & 0xff;\n        buffer[index++] = (lowBits >> 8) & 0xff;\n        buffer[index++] = (lowBits >> 16) & 0xff;\n        buffer[index++] = (lowBits >> 24) & 0xff;\n        // Encode high bits\n        buffer[index++] = highBits & 0xff;\n        buffer[index++] = (highBits >> 8) & 0xff;\n        buffer[index++] = (highBits >> 16) & 0xff;\n        buffer[index++] = (highBits >> 24) & 0xff;\n        return index;\n      } else if(typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_BINARY;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Get size of the buffer (current write point)\n        var size = value.length;\n        // Write the size of the string to buffer\n        buffer[index++] = size & 0xff;\n        buffer[index++] = (size >> 8) & 0xff;\n        buffer[index++] = (size >> 16) & 0xff;\n        buffer[index++] = (size >> 24) & 0xff;\n        // Write the default subtype\n        buffer[index++] = BSON.BSON_BINARY_SUBTYPE_DEFAULT;\n        // Copy the content form the binary field to the buffer\n        value.copy(buffer, index, 0, size);\n        // Adjust the index\n        index = index + size;\n        return index;\n      } else if(value instanceof Long || value instanceof Timestamp || value['_bsontype'] == 'Long' || value['_bsontype'] == 'Timestamp') {\n        // Write the type\n        buffer[index++] = value instanceof Long || value['_bsontype'] == 'Long' ? BSON.BSON_DATA_LONG : BSON.BSON_DATA_TIMESTAMP;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Write the date\n        var lowBits = value.getLowBits();\n        var highBits = value.getHighBits();\n        // Encode low bits\n        buffer[index++] = lowBits & 0xff;\n        buffer[index++] = (lowBits >> 8) & 0xff;\n        buffer[index++] = (lowBits >> 16) & 0xff;\n        buffer[index++] = (lowBits >> 24) & 0xff;\n        // Encode high bits\n        buffer[index++] = highBits & 0xff;\n        buffer[index++] = (highBits >> 8) & 0xff;\n        buffer[index++] = (highBits >> 16) & 0xff;\n        buffer[index++] = (highBits >> 24) & 0xff;\n        return index;\n      } else if(value instanceof Double || value['_bsontype'] == 'Double') {\n        // Encode as double\n        buffer[index++] = BSON.BSON_DATA_NUMBER;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Write float\n        writeIEEE754(buffer, value, index, 'little', 52, 8);\n        // Ajust index\n        index = index + 8;\n        return index;\n      } else if(value instanceof Code || value['_bsontype'] == 'Code') {\n        if(value.scope != null && Object.keys(value.scope).length > 0) {\n          // Write the type\n          buffer[index++] = BSON.BSON_DATA_CODE_W_SCOPE;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          // Calculate the scope size\n          var scopeSize = BSON.calculateObjectSize(value.scope, serializeFunctions);\n          // Function string\n          var functionString = value.code.toString();\n          // Function Size\n          var codeSize = supportsBuffer ? Buffer.byteLength(functionString) + 1 : numberOfBytes(functionString) + 1;\n\n          // Calculate full size of the object\n          var totalSize = 4 + codeSize + scopeSize + 4;\n\n          // Write the total size of the object\n          buffer[index++] = totalSize & 0xff;\n          buffer[index++] = (totalSize >> 8) & 0xff;\n          buffer[index++] = (totalSize >> 16) & 0xff;\n          buffer[index++] = (totalSize >> 24) & 0xff;\n\n          // Write the size of the string to buffer\n          buffer[index++] = codeSize & 0xff;\n          buffer[index++] = (codeSize >> 8) & 0xff;\n          buffer[index++] = (codeSize >> 16) & 0xff;\n          buffer[index++] = (codeSize >> 24) & 0xff;\n\n          // Write the string\n          supportsBuffer ? buffer.write(functionString, index, 'utf8') : writeToTypedArray(buffer, functionString, index);\n          // Update index\n          index = index + codeSize - 1;\n          // Write zero\n          buffer[index++] = 0;\n          // Serialize the scope object\n          var scopeObjectBuffer = supportsBuffer ? new Buffer(scopeSize) : new Uint8Array(new ArrayBuffer(scopeSize));\n          // Execute the serialization into a seperate buffer\n          serializeObject(value.scope, checkKeys, scopeObjectBuffer, 0, serializeFunctions);\n\n          // Adjusted scope Size (removing the header)\n          var scopeDocSize = scopeSize;\n          // Write scope object size\n          buffer[index++] = scopeDocSize & 0xff;\n          buffer[index++] = (scopeDocSize >> 8) & 0xff;\n          buffer[index++] = (scopeDocSize >> 16) & 0xff;\n          buffer[index++] = (scopeDocSize >> 24) & 0xff;\n\n          // Write the scopeObject into the buffer\n          supportsBuffer ? scopeObjectBuffer.copy(buffer, index, 0, scopeSize) : buffer.set(scopeObjectBuffer, index);\n          // Adjust index, removing the empty size of the doc (5 bytes 0000000005)\n          index = index + scopeDocSize - 5;\n          // Write trailing zero\n          buffer[index++] = 0;\n          return index\n        } else {\n          buffer[index++] = BSON.BSON_DATA_CODE;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          // Function string\n          var functionString = value.code.toString();\n          // Function Size\n          var size = supportsBuffer ? Buffer.byteLength(functionString) + 1 : numberOfBytes(functionString) + 1;\n          // Write the size of the string to buffer\n          buffer[index++] = size & 0xff;\n          buffer[index++] = (size >> 8) & 0xff;\n          buffer[index++] = (size >> 16) & 0xff;\n          buffer[index++] = (size >> 24) & 0xff;\n          // Write the string\n          supportsBuffer ? buffer.write(functionString, index, 'utf8') : writeToTypedArray(buffer, functionString, index);\n          // Update index\n          index = index + size - 1;\n          // Write zero\n          buffer[index++] = 0;\n          return index;\n        }\n      } else if(value instanceof Binary || value['_bsontype'] == 'Binary') {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_BINARY;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Extract the buffer\n        var data = value.value(true);\n        // Calculate size\n        var size = value.position;\n        // Write the size of the string to buffer\n        buffer[index++] = size & 0xff;\n        buffer[index++] = (size >> 8) & 0xff;\n        buffer[index++] = (size >> 16) & 0xff;\n        buffer[index++] = (size >> 24) & 0xff;\n        // Write the subtype to the buffer\n        buffer[index++] = value.sub_type;\n\n        // If we have binary type 2 the 4 first bytes are the size\n        if(value.sub_type == Binary.SUBTYPE_BYTE_ARRAY) {\n          buffer[index++] = size & 0xff;\n          buffer[index++] = (size >> 8) & 0xff;\n          buffer[index++] = (size >> 16) & 0xff;\n          buffer[index++] = (size >> 24) & 0xff;\n        }\n\n        // Write the data to the object\n        supportsBuffer ? data.copy(buffer, index, 0, value.position) : buffer.set(data, index);\n        // Ajust index\n        index = index + value.position;\n        return index;\n      } else if(value instanceof Symbol || value['_bsontype'] == 'Symbol') {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_SYMBOL;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Calculate size\n        var size = supportsBuffer ? Buffer.byteLength(value.value) + 1 : numberOfBytes(value.value) + 1;\n        // Write the size of the string to buffer\n        buffer[index++] = size & 0xff;\n        buffer[index++] = (size >> 8) & 0xff;\n        buffer[index++] = (size >> 16) & 0xff;\n        buffer[index++] = (size >> 24) & 0xff;\n        // Write the string\n        buffer.write(value.value, index, 'utf8');\n        // Update index\n        index = index + size - 1;\n        // Write zero\n        buffer[index++] = 0x00;\n        return index;\n      } else if(value instanceof DBRef || value['_bsontype'] == 'DBRef') {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_OBJECT;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n        // Set up correct object for serialization\n        var ordered_values = {\n            '$ref': value.namespace\n          , '$id' : value.oid\n        };\n\n        // Add db reference if it exists\n        if(null != value.db) {\n          ordered_values['$db'] = value.db;\n        }\n\n        // Message size\n        var size = BSON.calculateObjectSize(ordered_values, serializeFunctions);\n        // Serialize the object\n        var endIndex = BSON.serializeWithBufferAndIndex(ordered_values, checkKeys, buffer, index, serializeFunctions);\n        // Write the size of the string to buffer\n        buffer[index++] = size & 0xff;\n        buffer[index++] = (size >> 8) & 0xff;\n        buffer[index++] = (size >> 16) & 0xff;\n        buffer[index++] = (size >> 24) & 0xff;\n        // Write zero for object\n        buffer[endIndex++] = 0x00;\n        // Return the end index\n        return endIndex;\n      } else if(value instanceof RegExp || Object.prototype.toString.call(value) === '[object RegExp]') {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_REGEXP;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n\n        // Write the regular expression string\n        supportsBuffer ? buffer.write(value.source, index, 'utf8') : writeToTypedArray(buffer, value.source, index);\n        // Adjust the index\n        index = index + (supportsBuffer ? Buffer.byteLength(value.source) : numberOfBytes(value.source));\n        // Write zero\n        buffer[index++] = 0x00;\n        // Write the parameters\n        if(value.global) buffer[index++] = 0x73; // s\n        if(value.ignoreCase) buffer[index++] = 0x69; // i\n        if(value.multiline) buffer[index++] = 0x6d; // m\n        // Add ending zero\n        buffer[index++] = 0x00;\n        return index;\n      } else {\n        // Write the type\n        buffer[index++] = Array.isArray(value) ? BSON.BSON_DATA_ARRAY : BSON.BSON_DATA_OBJECT;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Adjust the index\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n\t      var endIndex = serializeObject(value, checkKeys, buffer, index + 4, serializeFunctions);\n        // Write size\n        var size = endIndex - index;\n        // Write the size of the string to buffer\n        buffer[index++] = size & 0xff;\n        buffer[index++] = (size >> 8) & 0xff;\n        buffer[index++] = (size >> 16) & 0xff;\n        buffer[index++] = (size >> 24) & 0xff;\n        return endIndex;\n      }\n    case 'function':\n      // WTF for 0.4.X where typeof /someregexp/ === 'function'\n      if(value instanceof RegExp || Object.prototype.toString.call(value) === '[object RegExp]' || String.call(value) == '[object RegExp]') {\n        // Write the type\n        buffer[index++] = BSON.BSON_DATA_REGEXP;\n        // Number of written bytes\n        var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n        // Encode the name\n        index = index + numberOfWrittenBytes + 1;\n        buffer[index - 1] = 0;\n\n        // Write the regular expression string\n        buffer.write(value.source, index, 'utf8');\n        // Adjust the index\n        index = index + (supportsBuffer ? Buffer.byteLength(value.source) : numberOfBytes(value.source));\n        // Write zero\n        buffer[index++] = 0x00;\n        // Write the parameters\n        if(value.global) buffer[index++] = 0x73; // s\n        if(value.ignoreCase) buffer[index++] = 0x69; // i\n        if(value.multiline) buffer[index++] = 0x6d; // m\n        // Add ending zero\n        buffer[index++] = 0x00;\n        return index;\n      } else {\n        if(serializeFunctions && value.scope != null && Object.keys(value.scope).length > 0) {\n          // Write the type\n          buffer[index++] = BSON.BSON_DATA_CODE_W_SCOPE;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          // Calculate the scope size\n          var scopeSize = BSON.calculateObjectSize(value.scope, serializeFunctions);\n          // Function string\n          var functionString = value.toString();\n          // Function Size\n          var codeSize = supportsBuffer ? Buffer.byteLength(functionString) + 1 : numberOfBytes(functionString) + 1;\n\n          // Calculate full size of the object\n          var totalSize = 4 + codeSize + scopeSize;\n\n          // Write the total size of the object\n          buffer[index++] = totalSize & 0xff;\n          buffer[index++] = (totalSize >> 8) & 0xff;\n          buffer[index++] = (totalSize >> 16) & 0xff;\n          buffer[index++] = (totalSize >> 24) & 0xff;\n\n          // Write the size of the string to buffer\n          buffer[index++] = codeSize & 0xff;\n          buffer[index++] = (codeSize >> 8) & 0xff;\n          buffer[index++] = (codeSize >> 16) & 0xff;\n          buffer[index++] = (codeSize >> 24) & 0xff;\n\n          // Write the string\n          supportsBuffer ? buffer.write(functionString, index, 'utf8') : writeToTypedArray(buffer, functionString, index);\n          // Update index\n          index = index + codeSize - 1;\n          // Write zero\n          buffer[index++] = 0;\n          // Serialize the scope object\n          var scopeObjectBuffer = new Buffer(scopeSize);\n          // Execute the serialization into a seperate buffer\n          serializeObject(value.scope, checkKeys, scopeObjectBuffer, 0, serializeFunctions);\n\n          // Adjusted scope Size (removing the header)\n          var scopeDocSize = scopeSize - 4;\n          // Write scope object size\n          buffer[index++] = scopeDocSize & 0xff;\n          buffer[index++] = (scopeDocSize >> 8) & 0xff;\n          buffer[index++] = (scopeDocSize >> 16) & 0xff;\n          buffer[index++] = (scopeDocSize >> 24) & 0xff;\n\n          // Write the scopeObject into the buffer\n          scopeObjectBuffer.copy(buffer, index, 0, scopeSize);\n\n          // Adjust index, removing the empty size of the doc (5 bytes 0000000005)\n          index = index + scopeDocSize - 5;\n          // Write trailing zero\n          buffer[index++] = 0;\n          return index\n        } else if(serializeFunctions) {\n          buffer[index++] = BSON.BSON_DATA_CODE;\n          // Number of written bytes\n          var numberOfWrittenBytes = supportsBuffer ? buffer.write(name, index, 'utf8') : writeToTypedArray(buffer, name, index);\n          // Encode the name\n          index = index + numberOfWrittenBytes + 1;\n          buffer[index - 1] = 0;\n          // Function string\n          var functionString = value.toString();\n          // Function Size\n          var size = supportsBuffer ? Buffer.byteLength(functionString) + 1 : numberOfBytes(functionString) + 1;\n          // Write the size of the string to buffer\n          buffer[index++] = size & 0xff;\n          buffer[index++] = (size >> 8) & 0xff;\n          buffer[index++] = (size >> 16) & 0xff;\n          buffer[index++] = (size >> 24) & 0xff;\n          // Write the string\n          supportsBuffer ? buffer.write(functionString, index, 'utf8') : writeToTypedArray(buffer, functionString, index);\n          // Update index\n          index = index + size - 1;\n          // Write zero\n          buffer[index++] = 0;\n          return index;\n        }\n      }\n  }\n\n  // If no value to serialize\n  return index;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "packElement",
+    "string": "packElement()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "object",
+     "description": "the Javascript object to serialize."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "checkKeys",
+     "description": "the serializer will check if keys are valid."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "asBuffer",
+     "description": "return the serialized object as a Buffer object **(ignore)**."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "serializeFunctions",
+     "description": "serialize the javascript functions **(default:false)**."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Buffer"
+     ],
+     "description": "returns the Buffer object containing the serialized object."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Serialize a Javascript object.</p>",
+    "summary": "<p>Serialize a Javascript object.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.serialize = function(object, checkKeys, asBuffer, serializeFunctions) {\n  // Throw error if we are trying serialize an illegal type\n  if(object == null || typeof object != 'object' || Array.isArray(object)) \n    throw new Error(\"Only javascript objects supported\");\n  \n  // Emoty target buffer\n  var buffer = null;\n  // Calculate the size of the object\n  var size = BSON.calculateObjectSize(object, serializeFunctions);\n  // Fetch the best available type for storing the binary data\n  if(buffer = typeof Buffer != 'undefined') {\n    buffer = new Buffer(size);\n    asBuffer = true;\n  } else if(typeof Uint8Array != 'undefined') {\n    buffer = new Uint8Array(new ArrayBuffer(size));\n  } else {\n    buffer = new Array(size);\n  }\n\n  // If asBuffer is false use typed arrays\n  BSON.serializeWithBufferAndIndex(object, checkKeys, buffer, 0, serializeFunctions);\n  // console.log(\"++++++++++++++++++++++++++++++++++++ OLDJS :: \" + buffer.length)  \n  // console.log(buffer.toString('hex'))\n  // console.log(buffer.toString('ascii'))\n  return buffer;\n}",
+   "ctx": {
+    "type": "method",
+    "receiver": "BSON",
+    "name": "serialize",
+    "string": "BSON.serialize()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Contains the function cache if we have that enable to allow for avoiding the eval step on each deserialization, comparison is by md5</p>",
+    "summary": "<p>Contains the function cache if we have that enable to allow for avoiding the eval step on each deserialization, comparison is by md5</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var functionCache = BSON.functionCache = {};",
+   "ctx": {
+    "type": "declaration",
+    "name": "functionCache",
+    "value": "BSON.functionCache = {}",
+    "string": "functionCache"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Crc state variables shared by function</p>",
+    "summary": "<p>Crc state variables shared by function</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var table = [0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2, 0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7, 0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC, 0x14015C4F, 0x63066CD9, 0xFA0F3D63, 0x8D080DF5, 0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172, 0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B, 0x35B5A8FA, 0x42B2986C, 0xDBBBC9D6, 0xACBCF940, 0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59, 0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423, 0xCFBA9599, 0xB8BDA50F, 0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924, 0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D, 0x76DC4190, 0x01DB7106, 0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433, 0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D, 0x91646C97, 0xE6635C01, 0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E, 0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457, 0x65B0D9C6, 0x12B7E950, 0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65, 0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2, 0x4ADFA541, 0x3DD895D7, 0xA4D1C46D, 0xD3D6F4FB, 0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0, 0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9, 0x5005713C, 0x270241AA, 0xBE0B1010, 0xC90C2086, 0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F, 0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81, 0xB7BD5C3B, 0xC0BA6CAD, 0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A, 0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683, 0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1, 0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB, 0x196C3671, 0x6E6B06E7, 0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC, 0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5, 0xD6D6A3E8, 0xA1D1937E, 0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B, 0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60, 0xDF60EFC3, 0xA867DF55, 0x316E8EEF, 0x4669BE79, 0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236, 0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F, 0xC5BA3BBE, 0xB2BD0B28, 0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D, 0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F, 0x72076785, 0x05005713, 0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38, 0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21, 0x86D3D2D4, 0xF1D4E242, 0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777, 0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69, 0x616BFFD3, 0x166CCF45, 0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2, 0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB, 0xAED16A4A, 0xD9D65ADC, 0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9, 0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D];",
+   "ctx": {
+    "type": "declaration",
+    "name": "table",
+    "value": "[0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2, 0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7, 0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC, 0x14015C4F, 0x63066CD9, 0xFA0F3D63, 0x8D080DF5, 0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172, 0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B, 0x35B5A8FA, 0x42B2986C, 0xDBBBC9D6, 0xACBCF940, 0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59, 0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423, 0xCFBA9599, 0xB8BDA50F, 0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924, 0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D, 0x76DC4190, 0x01DB7106, 0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433, 0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D, 0x91646C97, 0xE6635C01, 0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E, 0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457, 0x65B0D9C6, 0x12B7E950, 0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65, 0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2, 0x4ADFA541, 0x3DD895D7, 0xA4D1C46D, 0xD3D6F4FB, 0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0, 0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9, 0x5005713C, 0x270241AA, 0xBE0B1010, 0xC90C2086, 0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F, 0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81, 0xB7BD5C3B, 0xC0BA6CAD, 0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A, 0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683, 0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1, 0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB, 0x196C3671, 0x6E6B06E7, 0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC, 0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5, 0xD6D6A3E8, 0xA1D1937E, 0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B, 0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60, 0xDF60EFC3, 0xA867DF55, 0x316E8EEF, 0x4669BE79, 0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236, 0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F, 0xC5BA3BBE, 0xB2BD0B28, 0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D, 0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F, 0x72076785, 0x05005713, 0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38, 0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21, 0x86D3D2D4, 0xF1D4E242, 0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777, 0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69, 0x616BFFD3, 0x166CCF45, 0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2, 0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB, 0xAED16A4A, 0xD9D65ADC, 0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9, 0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D]",
+    "string": "table"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>CRC32 hash method, Fast and enough versitility for our usage</p>",
+    "summary": "<p>CRC32 hash method, Fast and enough versitility for our usage</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var crc32 =  function(string, start, end) {\n  var crc = 0\n  var x = 0;\n  var y = 0;\n  crc = crc ^ (-1);\n\n  for(var i = start, iTop = end; i < iTop;i++) {\n  \ty = (crc ^ string[i]) & 0xFF;\n    x = table[y];\n  \tcrc = (crc >>> 8) ^ x;\n  }\n\n  return crc ^ (-1);\n}",
+   "ctx": {
+    "type": "function",
+    "name": "crc32",
+    "string": "crc32()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "data",
+     "description": "the buffer containing the serialized set of BSON documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "startIndex",
+     "description": "the start index in the data Buffer where the deserialization is to start."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numberOfDocuments",
+     "description": "number of documents to deserialize."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Array"
+     ],
+     "name": "documents",
+     "description": "an array where to store the deserialized documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "docStartIndex",
+     "description": "the index in the documents array from where to start inserting documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "[options]",
+     "description": "additional options used for the deserialization."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the next index in the buffer after deserialization **x** numbers of documents."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Deserialize stream data as BSON documents.</p>\n\n<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.<br /> - <strong>promoteLongs</strong> {Boolean, default:true}, when deserializing a Long will fit it into a Number if it's smaller than 53 bits</p>",
+    "summary": "<p>Deserialize stream data as BSON documents.</p>",
+    "body": "<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.<br /> - <strong>promoteLongs</strong> {Boolean, default:true}, when deserializing a Long will fit it into a Number if it's smaller than 53 bits</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.deserializeStream = function(data, startIndex, numberOfDocuments, documents, docStartIndex, options) {\n  // if(numberOfDocuments !== documents.length) throw new Error(\"Number of expected results back is less than the number of documents\");\n  options = options != null ? options : {};\n  var index = startIndex;\n  // Loop over all documents\n  for(var i = 0; i < numberOfDocuments; i++) {\n    // Find size of the document\n    var size = data[index] | data[index + 1] << 8 | data[index + 2] << 16 | data[index + 3] << 24;\n    // Update options with index\n    options['index'] = index;\n    // Parse the document at this point\n    documents[docStartIndex + i] = BSON.deserialize(data, options);\n    // Adjust index by the document size\n    index = index + size;\n  }\n\n  // Return object containing end index of parsing and list of documents\n  return index;\n}",
+   "ctx": {
+    "type": "method",
+    "receiver": "BSON",
+    "name": "deserializeStream",
+    "string": "BSON.deserializeStream()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Ensure eval is isolated.</p>",
+    "summary": "<p>Ensure eval is isolated.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var isolateEvalWithHash = function(functionCache, hash, functionString, object) {\n  // Contains the value we are going to set\n  var value = null;\n\n  // Check for cache hit, eval if missing and return cached function\n  if(functionCache[hash] == null) {\n    eval(\"value = \" + functionString);\n    functionCache[hash] = value;\n  }\n  // Set the object\n  return functionCache[hash].bind(object);\n}",
+   "ctx": {
+    "type": "function",
+    "name": "isolateEvalWithHash",
+    "string": "isolateEvalWithHash()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Ensure eval is isolated.</p>",
+    "summary": "<p>Ensure eval is isolated.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var isolateEval = function(functionString) {\n  // Contains the value we are going to set\n  var value = null;\n  // Eval the function\n  eval(\"value = \" + functionString);\n  return value;\n}",
+   "ctx": {
+    "type": "function",
+    "name": "isolateEval",
+    "string": "isolateEval()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Convert Uint8Array to String</p>",
+    "summary": "<p>Convert Uint8Array to String</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "var convertUint8ArrayToUtf8String = function(byteArray, startIndex, endIndex) {\n  return BinaryParser.decode_utf8(convertArraytoUtf8BinaryString(byteArray, startIndex, endIndex));\n}\n\nvar convertArraytoUtf8BinaryString = function(byteArray, startIndex, endIndex) {\n  var result = \"\";\n  for(var i = startIndex; i < endIndex; i++) {\n    result = result + String.fromCharCode(byteArray[i]);\n  }\n\n  return result;\n};",
+   "ctx": {
+    "type": "function",
+    "name": "convertUint8ArrayToUtf8String",
+    "string": "convertUint8ArrayToUtf8String()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "buffer",
+     "description": "the buffer containing the serialized set of BSON documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "[options]",
+     "description": "additional options used for the deserialization."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "[isArray]",
+     "description": "ignore used for recursive parsing."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Object"
+     ],
+     "description": "returns the deserialized Javascript Object."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Deserialize data as BSON.</p>\n\n<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.<br /> - <strong>promoteLongs</strong> {Boolean, default:true}, when deserializing a Long will fit it into a Number if it's smaller than 53 bits</p>",
+    "summary": "<p>Deserialize data as BSON.</p>",
+    "body": "<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.<br /> - <strong>promoteLongs</strong> {Boolean, default:true}, when deserializing a Long will fit it into a Number if it's smaller than 53 bits</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.deserialize = function(buffer, options, isArray) {\n  // Options\n  options = options == null ? {} : options;\n  var evalFunctions = options['evalFunctions'] == null ? false : options['evalFunctions'];\n  var cacheFunctions = options['cacheFunctions'] == null ? false : options['cacheFunctions'];\n  var cacheFunctionsCrc32 = options['cacheFunctionsCrc32'] == null ? false : options['cacheFunctionsCrc32'];\n  var promoteLongs = options['promoteLongs'] == null ? true : options['promoteLongs'];\n\n  // Validate that we have at least 4 bytes of buffer\n  if(buffer.length < 5) throw new Error(\"corrupt bson message < 5 bytes long\");\n\n  // Set up index\n  var index = typeof options['index'] == 'number' ? options['index'] : 0;\n  // Reads in a C style string\n  var readCStyleString = function() {\n    // Get the start search index\n    var i = index;\n    // Locate the end of the c string\n    while(buffer[i] !== 0x00 && i < buffer.length) { \n      i++ \n    }\n    // If are at the end of the buffer there is a problem with the document\n    if(i >= buffer.length) throw new Error(\"Bad BSON Document: illegal CString\")\n    // Grab utf8 encoded string\n    var string = supportsBuffer && Buffer.isBuffer(buffer) ? buffer.toString('utf8', index, i) : convertUint8ArrayToUtf8String(buffer, index, i);\n    // Update index position\n    index = i + 1;\n    // Return string\n    return string;\n  }\n\n  // Create holding object\n  var object = isArray ? [] : {};\n\n  // Read the document size\n  var size = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n\n  // Ensure buffer is valid size\n  if(size < 5 || size > buffer.length) throw new Error(\"corrupt bson message\");\n\n  // While we have more left data left keep parsing\n  while(true) {\n    // Read the type\n    var elementType = buffer[index++];\n    // If we get a zero it's the last byte, exit\n    if(elementType == 0) break;\n    // Read the name of the field\n    var name = readCStyleString();\n    // Switch on the type\n    switch(elementType) {\n      case BSON.BSON_DATA_OID:\n        var string = supportsBuffer && Buffer.isBuffer(buffer) ? buffer.toString('binary', index, index + 12) : convertArraytoUtf8BinaryString(buffer, index, index + 12);\n        // Decode the oid\n        object[name] = new ObjectID(string);\n        // Update index\n        index = index + 12;\n        break;\n      case BSON.BSON_DATA_STRING:\n        // Read the content of the field\n        var stringSize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Add string to object\n        object[name] = supportsBuffer && Buffer.isBuffer(buffer) ? buffer.toString('utf8', index, index + stringSize - 1) : convertUint8ArrayToUtf8String(buffer, index, index + stringSize - 1);\n        // Update parse index position\n        index = index + stringSize;\n        break;\n      case BSON.BSON_DATA_INT:\n        // Decode the 32bit value\n        object[name] = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        break;\n      case BSON.BSON_DATA_NUMBER:\n        // Decode the double value\n        object[name] = readIEEE754(buffer, index, 'little', 52, 8);\n        // Update the index\n        index = index + 8;\n        break;\n      case BSON.BSON_DATA_DATE:\n        // Unpack the low and high bits\n        var lowBits = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        var highBits = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Set date object\n        object[name] = new Date(new Long(lowBits, highBits).toNumber());\n        break;\n      case BSON.BSON_DATA_BOOLEAN:\n        // Parse the boolean value\n        object[name] = buffer[index++] == 1;\n        break;\n      case BSON.BSON_DATA_UNDEFINED:\n      case BSON.BSON_DATA_NULL:\n        // Parse the boolean value\n        object[name] = null;\n        break;\n      case BSON.BSON_DATA_BINARY:\n        // Decode the size of the binary blob\n        var binarySize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Decode the subtype\n        var subType = buffer[index++];\n        // Decode as raw Buffer object if options specifies it\n        if(buffer['slice'] != null) {\n          // If we have subtype 2 skip the 4 bytes for the size\n          if(subType == Binary.SUBTYPE_BYTE_ARRAY) {\n            binarySize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n          }\n          // Slice the data\n          object[name] = new Binary(buffer.slice(index, index + binarySize), subType);\n        } else {\n          var _buffer = typeof Uint8Array != 'undefined' ? new Uint8Array(new ArrayBuffer(binarySize)) : new Array(binarySize);\n          // If we have subtype 2 skip the 4 bytes for the size\n          if(subType == Binary.SUBTYPE_BYTE_ARRAY) {\n            binarySize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n          }\n          // Copy the data\n          for(var i = 0; i < binarySize; i++) {\n            _buffer[i] = buffer[index + i];\n          }\n          // Create the binary object\n          object[name] = new Binary(_buffer, subType);\n        }\n        // Update the index\n        index = index + binarySize;\n        break;\n      case BSON.BSON_DATA_ARRAY:\n        options['index'] = index;\n        // Decode the size of the array document\n        var objectSize = buffer[index] | buffer[index + 1] << 8 | buffer[index + 2] << 16 | buffer[index + 3] << 24;\n        // Set the array to the object\n        object[name] = BSON.deserialize(buffer, options, true);\n        // Adjust the index\n        index = index + objectSize;\n        break;\n      case BSON.BSON_DATA_OBJECT:\n        options['index'] = index;\n        // Decode the size of the object document\n        var objectSize = buffer[index] | buffer[index + 1] << 8 | buffer[index + 2] << 16 | buffer[index + 3] << 24;\n        // Set the array to the object\n        object[name] = BSON.deserialize(buffer, options, false);\n        // Adjust the index\n        index = index + objectSize;\n        break;\n      case BSON.BSON_DATA_REGEXP:\n        // Create the regexp\n        var source = readCStyleString();\n        var regExpOptions = readCStyleString();\n        // For each option add the corresponding one for javascript\n        var optionsArray = new Array(regExpOptions.length);\n\n        // Parse options\n        for(var i = 0; i < regExpOptions.length; i++) {\n          switch(regExpOptions[i]) {\n            case 'm':\n              optionsArray[i] = 'm';\n              break;\n            case 's':\n              optionsArray[i] = 'g';\n              break;\n            case 'i':\n              optionsArray[i] = 'i';\n              break;\n          }\n        }\n\n        object[name] = new RegExp(source, optionsArray.join(''));\n        break;\n      case BSON.BSON_DATA_LONG:\n        // Unpack the low and high bits\n        var lowBits = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        var highBits = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Create long object\n        var long = new Long(lowBits, highBits); \n        // Promote the long if possible\n        if(promoteLongs) {\n          object[name] = long.lessThanOrEqual(JS_INT_MAX_LONG) && long.greaterThanOrEqual(JS_INT_MIN_LONG) ? long.toNumber() : long;\n        } else {\n          object[name] = long;\n        }\n        break;\n      case BSON.BSON_DATA_SYMBOL:\n        // Read the content of the field\n        var stringSize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Add string to object\n        object[name] = new Symbol(buffer.toString('utf8', index, index + stringSize - 1));\n        // Update parse index position\n        index = index + stringSize;\n        break;\n      case BSON.BSON_DATA_TIMESTAMP:\n        // Unpack the low and high bits\n        var lowBits = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        var highBits = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Set the object\n        object[name] = new Timestamp(lowBits, highBits);\n        break;\n      case BSON.BSON_DATA_MIN_KEY:\n        // Parse the object\n        object[name] = new MinKey();\n        break;\n      case BSON.BSON_DATA_MAX_KEY:\n        // Parse the object\n        object[name] = new MaxKey();\n        break;\n      case BSON.BSON_DATA_CODE:\n        // Read the content of the field\n        var stringSize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Function string\n        var functionString = supportsBuffer && Buffer.isBuffer(buffer) ? buffer.toString('utf8', index, index + stringSize - 1) : convertUint8ArrayToUtf8String(buffer, index, index + stringSize - 1);\n\n        // If we are evaluating the functions\n        if(evalFunctions) {\n          // Contains the value we are going to set\n          var value = null;\n          // If we have cache enabled let's look for the md5 of the function in the cache\n          if(cacheFunctions) {\n            var hash = cacheFunctionsCrc32 ? crc32(functionString) : functionString;\n            // Got to do this to avoid V8 deoptimizing the call due to finding eval\n            object[name] = isolateEvalWithHash(functionCache, hash, functionString, object);\n          } else {\n            // Set directly\n            object[name] = isolateEval(functionString);\n          }\n        } else {\n          object[name]  = new Code(functionString, {});\n        }\n\n        // Update parse index position\n        index = index + stringSize;\n        break;\n      case BSON.BSON_DATA_CODE_W_SCOPE:\n        // Read the content of the field\n        var totalSize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        var stringSize = buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24;\n        // Javascript function\n        var functionString = supportsBuffer && Buffer.isBuffer(buffer) ? buffer.toString('utf8', index, index + stringSize - 1) : convertUint8ArrayToUtf8String(buffer, index, index + stringSize - 1);\n        // Update parse index position\n        index = index + stringSize;\n        // Parse the element\n        options['index'] = index;\n        // Decode the size of the object document\n        var objectSize = buffer[index] | buffer[index + 1] << 8 | buffer[index + 2] << 16 | buffer[index + 3] << 24;\n        // Decode the scope object\n        var scopeObject = BSON.deserialize(buffer, options, false);\n        // Adjust the index\n        index = index + objectSize;\n\n        // If we are evaluating the functions\n        if(evalFunctions) {\n          // Contains the value we are going to set\n          var value = null;\n          // If we have cache enabled let's look for the md5 of the function in the cache\n          if(cacheFunctions) {\n            var hash = cacheFunctionsCrc32 ? crc32(functionString) : functionString;\n            // Got to do this to avoid V8 deoptimizing the call due to finding eval\n            object[name] = isolateEvalWithHash(functionCache, hash, functionString, object);\n          } else {\n            // Set directly\n            object[name] = isolateEval(functionString);\n          }\n\n          // Set the scope on the object\n          object[name].scope = scopeObject;\n        } else {\n          object[name]  = new Code(functionString, scopeObject);\n        }\n\n        // Add string to object\n        break;\n    }\n  }\n\n  // Check if we have a db ref object\n  if(object['$id'] != null) object = new DBRef(object['$ref'], object['$id'], object['$db']);\n\n  // Return the final objects\n  return object;\n}",
+   "ctx": {
+    "type": "method",
+    "receiver": "BSON",
+    "name": "deserialize",
+    "string": "BSON.deserialize()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "ignore",
+     "string": ""
+    },
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>Check if key name is valid.</p>",
+    "summary": "<p>Check if key name is valid.</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "BSON.checkKey = function checkKey (key, dollarsAndDotsOk) {\n  if (!key.length) return;\n  // Check if we have a legal key for the object\n  if (!!~key.indexOf(\"\\x00\")) {\n    // The BSON spec doesn't allow keys with null bytes because keys are\n    // null-terminated.\n    throw Error(\"key \" + key + \" must not contain null bytes\");\n  }\n  if (!dollarsAndDotsOk) {\n    if('$' == key[0]) {\n      throw Error(\"key \" + key + \" must not start with '$'\");\n    } else if (!!~key.indexOf('.')) {\n      throw Error(\"key \" + key + \" must not contain '.'\");\n    }\n  }\n};",
+   "ctx": {
+    "type": "method",
+    "receiver": "BSON",
+    "name": "checkKey",
+    "string": "BSON.checkKey()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "buffer",
+     "description": "the buffer containing the serialized set of BSON documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "[options]",
+     "description": "additional options used for the deserialization."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "[isArray]",
+     "description": "ignore used for recursive parsing."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Object"
+     ],
+     "description": "returns the deserialized Javascript Object."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Deserialize data as BSON.</p>\n\n<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.</p>",
+    "summary": "<p>Deserialize data as BSON.</p>",
+    "body": "<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.prototype.deserialize = function(data, options) {\n  return BSON.deserialize(data, options);\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "BSON",
+    "cons": "BSON",
+    "name": "deserialize",
+    "string": "BSON.prototype.deserialize()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "data",
+     "description": "the buffer containing the serialized set of BSON documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "startIndex",
+     "description": "the start index in the data Buffer where the deserialization is to start."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "numberOfDocuments",
+     "description": "number of documents to deserialize."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Array"
+     ],
+     "name": "documents",
+     "description": "an array where to store the deserialized documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "docStartIndex",
+     "description": "the index in the documents array from where to start inserting documents."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "[options]",
+     "description": "additional options used for the deserialization."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the next index in the buffer after deserialization **x** numbers of documents."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Deserialize stream data as BSON documents.</p>\n\n<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.</p>",
+    "summary": "<p>Deserialize stream data as BSON documents.</p>",
+    "body": "<p>Options<br /> - <strong>evalFunctions</strong> {Boolean, default:false}, evaluate functions in the BSON document scoped to the object deserialized.<br /> - <strong>cacheFunctions</strong> {Boolean, default:false}, cache evaluated functions for reuse.<br /> - <strong>cacheFunctionsCrc32</strong> {Boolean, default:false}, use a crc32 code for caching, otherwise use the string of the function.</p>"
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.prototype.deserializeStream = function(data, startIndex, numberOfDocuments, documents, docStartIndex, options) {\n  return BSON.deserializeStream(data, startIndex, numberOfDocuments, documents, docStartIndex, options);\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "BSON",
+    "cons": "BSON",
+    "name": "deserializeStream",
+    "string": "BSON.prototype.deserializeStream()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "object",
+     "description": "the Javascript object to serialize."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "checkKeys",
+     "description": "the serializer will check if keys are valid."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "asBuffer",
+     "description": "return the serialized object as a Buffer object **(ignore)**."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "serializeFunctions",
+     "description": "serialize the javascript functions **(default:false)**."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Buffer"
+     ],
+     "description": "returns the Buffer object containing the serialized object."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Serialize a Javascript object.</p>",
+    "summary": "<p>Serialize a Javascript object.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.prototype.serialize = function(object, checkKeys, asBuffer, serializeFunctions) {\n  return BSON.serialize(object, checkKeys, asBuffer, serializeFunctions);\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "BSON",
+    "cons": "BSON",
+    "name": "serialize",
+    "string": "BSON.prototype.serialize()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "object",
+     "description": "the Javascript object to calculate the BSON byte size for."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "[serializeFunctions]",
+     "description": "serialize all functions in the object **(default:false)**."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the number of bytes the BSON object will take up."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Calculate the bson size for a passed in Javascript object.</p>",
+    "summary": "<p>Calculate the bson size for a passed in Javascript object.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.prototype.calculateObjectSize = function(object, serializeFunctions) {\n  return BSON.calculateObjectSize(object, serializeFunctions);\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "BSON",
+    "cons": "BSON",
+    "name": "calculateObjectSize",
+    "string": "BSON.prototype.calculateObjectSize()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "param",
+     "types": [
+      "Object"
+     ],
+     "name": "object",
+     "description": "the Javascript object to serialize."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "checkKeys",
+     "description": "the serializer will check if keys are valid."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Buffer"
+     ],
+     "name": "buffer",
+     "description": "the Buffer you pre-allocated to store the serialized BSON object."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Number"
+     ],
+     "name": "index",
+     "description": "the index in the buffer where we wish to start serializing into."
+    },
+    {
+     "type": "param",
+     "types": [
+      "Boolean"
+     ],
+     "name": "serializeFunctions",
+     "description": "serialize the javascript functions **(default:false)**."
+    },
+    {
+     "type": "return",
+     "types": [
+      "Number"
+     ],
+     "description": "returns the new write index in the Buffer."
+    },
+    {
+     "type": "api",
+     "visibility": "public"
+    }
+   ],
+   "description": {
+    "full": "<p>Serialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization.</p>",
+    "summary": "<p>Serialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization.</p>",
+    "body": ""
+   },
+   "isPrivate": false,
+   "ignore": false,
+   "code": "BSON.prototype.serializeWithBufferAndIndex = function(object, checkKeys, buffer, startIndex, serializeFunctions) {\n  return BSON.serializeWithBufferAndIndex(object, checkKeys, buffer, startIndex, serializeFunctions);\n}",
+   "ctx": {
+    "type": "method",
+    "constructor": "BSON",
+    "cons": "BSON",
+    "name": "serializeWithBufferAndIndex",
+    "string": "BSON.prototype.serializeWithBufferAndIndex()"
+   }
+  },
+  {
+   "tags": [
+    {
+     "type": "api",
+     "visibility": "private"
+    }
+   ],
+   "description": {
+    "full": "<p>@ignore</p>",
+    "summary": "<p>@ignore</p>",
+    "body": ""
+   },
+   "isPrivate": true,
+   "ignore": false,
+   "code": "exports.Code = Code;\nexports.Symbol = Symbol;\nexports.BSON = BSON;\nexports.DBRef = DBRef;\nexports.Binary = Binary;\nexports.ObjectID = ObjectID;\nexports.Long = Long;\nexports.Timestamp = Timestamp;\nexports.Double = Double;\nexports.MinKey = MinKey;\nexports.MaxKey = MaxKey;",
+   "ctx": {
+    "type": "property",
+    "receiver": "exports",
+    "name": "Code",
+    "value": "Code",
+    "string": "exports.Code"
+   }
+  }
  ]
 }
