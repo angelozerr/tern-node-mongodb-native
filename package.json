@@ -1,13 +1,16 @@
 {
-  "name": "tern-node-mongodb",
+  "name": "tern-node-mongodb-native",
   "license": "MIT",
   "version": "0.1.0",
-  "main": "node-mongodb.js",
+  "main": "node-mongodb-native.js",
   "author": "Angelo ZERR <angelo.zerr@gmail.com>",
   "description": "A Tern plugin adding support for Mongo DB Native NodeJS Driver.",
   "repository": {
     "type": "git",
-    "url": "git://github.com/angelozerr/tern-node-mongodb.git"
+    "url": "git://github.com/angelozerr/tern-node-mongodb-native.git"
+  },
+  "devDependencies": { 
+  	"dox": "0.4.4" 
   },
   "keywords": [
     "tern",
