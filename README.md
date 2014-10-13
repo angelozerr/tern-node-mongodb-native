@@ -38,7 +38,7 @@ Here the steps :
   
 	`node generator/data/node/js2api_mongodb`
 
- * Generate the tern plugin **node-mongodb-native.js** from api.json, by launching :
+* Generate the tern plugin **node-mongodb-native.js** from api.json, by launching :
  
 	`node generator/node/make_plugin`
 
