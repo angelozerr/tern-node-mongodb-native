@@ -62,45 +62,50 @@
           // !type
           ternClass["!type"] = getTernClassType(moduleInfos, entry, moduleName, className, null, false, options);
           // !url
-          if (options.baseURL) ternClass["!url"] = options.baseURL + moduleName + '.html';
+          if (options.getURL) {
+            var url = options.getURL(moduleName); 
+            if (url) ternClass["!url"] = url;
+          }
           // !doc
           var fullDescription = getFullDescription(entry);
-          if (fullDescription != '') ternClass["!doc"] = fullDescription;        
-          // methods
-          this.visitFunctions(moduleInfos, entries, moduleName, className, ternClass);
-          // properties
-          //this.visitProperties(moduleInfos, entries, moduleName, className, ternClass);          
-          // class constants
-          this.visitClassConstants(entries, ternClass);
+          if (fullDescription != '') ternClass["!doc"] = fullDescription;  
+          
+          // loop for entries
+          for(var i = 0; i < entries.length; i++) {
+            var entry = entries[i];
+            if(isFunction(entry)) {
+              this.visitFunction(moduleInfos, entry, moduleName, className, ternClass);
+            } else if(isClassConstant(entry)) {
+              this.visitClassConstant (entry, ternClass);
+            }
+          }
           ternModule[className] = ternClass;
         }
       }
     }
 
-    Generator.prototype.visitFunctions = function(moduleInfos, entries, moduleName, className, ternClass) {
+    Generator.prototype.visitFunction = function(moduleInfos, entry, moduleName, className, ternClass) {
       var options = this.options;
-      for(var i = 0; i < entries.length; i++) {
-        var entry = entries[i];
-        if(isFunction(entry)) {
-          var methodName = entry.ctx.name, staticMethod = isStaticMethod(entry);
-          var ternMethod = {};
-          // !type
-          ternMethod["!type"] = getTernClassType(moduleInfos, entry, moduleName, className, methodName, staticMethod, options);
-          // !effect
-          var ternEffects = getTernEffects(moduleName, className, methodName, staticMethod, options);
-          if (ternEffects) ternMethod["!effects"] = ternEffects;
-          // !url
-          if (options.baseURL) ternMethod["!url"] = options.baseURL + moduleName + '.html#' + methodName;
-          // !doc
-          var fullDescription = getFullDescription(entry);
-          if (fullDescription != '') ternMethod["!doc"] = fullDescription;
-          var ternClassOrPrototype = ternClass;
-          if (!staticMethod) {
-            ternClassOrPrototype = getTernClassPrototype(ternClass, moduleName, className, options);
-          }
-          ternClassOrPrototype[methodName] = ternMethod
-        }
+      var methodName = entry.ctx.name, staticMethod = isStaticMethod(entry);
+      var ternMethod = {};
+      // !type
+      ternMethod["!type"] = getTernClassType(moduleInfos, entry, moduleName, className, methodName, staticMethod, options);
+      // !effect
+      var ternEffects = getTernEffects(moduleName, className, methodName, staticMethod, options);
+      if (ternEffects) ternMethod["!effects"] = ternEffects;
+      // !url
+      if (options.getURL) {
+        var url = options.getURL(moduleName, methodName); 
+        if (url) ternMethod["!url"] = url;
       }
+      // !doc
+      var fullDescription = getFullDescription(entry);
+      if (fullDescription != '') ternMethod["!doc"] = fullDescription;
+      var ternClassOrPrototype = ternClass;
+      if (!staticMethod) {
+        ternClassOrPrototype = getTernClassPrototype(ternClass, moduleName, className, options);
+      }
+      ternClassOrPrototype[methodName] = ternMethod;
     }
 
     Generator.prototype.visitProperties = function(moduleInfos, entries, moduleName, className, ternClass) {
@@ -129,13 +134,8 @@
       }
     }
 
-    Generator.prototype.visitClassConstants = function(entries, ternClass) {
-      for(var i = 0; i < entries.length; i++) {
-        var entry = entries[i];
-        if(isClassConstant(entry)) {
-          
-        }
-      }
+    Generator.prototype.visitClassConstant = function(entry, ternClass) {
+
     }
     
     function getTernClassPrototype(ternClass, moduleName, className, options) {
@@ -170,8 +170,8 @@
       if(entry.ctx != null 
         && (entry.ctx.type == 'method' || entry.ctx.type == 'function')
         && entry.isPrivate == false
-        && entry.tags.length >= 1
-        && (entry.tags[0].type == 'param' || entry.tags[0].type == 'return')) {
+        /*&& entry.tags.length >= 1
+        && (entry.tags[0].type == 'param' || entry.tags[0].type == 'return')*/) {
         return true;
       }
       return false;

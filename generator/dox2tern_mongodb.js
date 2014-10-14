@@ -12,7 +12,8 @@
       "initialize" : initialize,
       "getProto" : getProto,
       "getEffects" : getEffects,
-      "getType" : getType
+      "getType" : getType,
+      "getURL" : getURL
     };
     var generator = new dox2tern.Generator(options);
     return generator.process(api);
@@ -107,5 +108,15 @@
     }
   }
   
+  var getURL = function(moduleName, methodName) {
+    var url = "http://mongodb.github.io/node-mongodb-native/api-generated/";
+    url+=moduleName;
+    url+=".html";
+    if (methodName) {
+      url+="#";
+      url+=methodName;
+    }
+    return url;
+  }
   
 });  
