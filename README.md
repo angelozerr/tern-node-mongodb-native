@@ -12,6 +12,42 @@ You can see demo with CodeMirror (inside Web Browser) [demos/mongodb.html](https
 
 If you wish to use Eclipse as IDE, see https://github.com/angelozerr/tern.java
 
+## Installation
+
+tern-node-mongodb-native works with the NodeJS [Tern Server][tern-server], and within a browser.
+
+The easiest way to install tern-node-mongodb-native is to use a recent version of
+[npm][npm]. In the directory where you installed the [tern package][tern-npm],
+simply run
+
+```
+$ npm install tern-node-mongodb-native
+```
+
+## Configuration
+
+`mongodb-native` tern plugin extends `node` tern plugin to support mongodb-native.
+
+### With Node.js
+
+In order for Tern to load the tern-node-mongodb-native plugin once it is installed, you must
+include `node-mongodb-native` in the `plugins` section of your [Tern configuration
+file][tern-config] and `node`.
+
+Here is a minimal example `.tern-project` configuration file:
+
+```json
+{
+  "plugins": {
+    "node": {},
+    "node-mongodb-native": {}
+  }
+}
+```
+
+### With WebBrowser (CodeMirror)
+
+See [demos/mongodb-native.html](https://github.com/angelozerr/tern-node-mongodb-native/blob/master/demos/mongodb-native.html)
 ## How to generate node-mongodb-native.js?
 
 ### Introduction
@@ -55,4 +91,4 @@ If you wish to work on the dox JSON Representation (api.json) to tern JSON Type 
 The basic structure of the project is given in the following way:
 
 * `node-mongodb-native.js` the tern plugin.
-* `demos/` demos with express tern plugin which use CodeMirror.
+* `demos/` demos with node-mongodb-native tern plugin which use CodeMirror.
