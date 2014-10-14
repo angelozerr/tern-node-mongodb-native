@@ -8,7 +8,9 @@
 
 You can see demo with CodeMirror (inside Web Browser) [demos/mongodb.html](https://github.com/angelozerr/tern-node-mongodb-native/blob/master/demos/mongodb.html) :
 
-TODO
+![CodeMirror & TernNodeMongoDBNative](https://github.com/angelozerr/tern-node-express/wiki/images/CodeMirror_TernNodeMongoDBNativeCompletions.png)
+
+If you wish to use Eclipse as IDE, see https://github.com/angelozerr/tern.java
 
 ## How to generate node-mongodb-native.js?
 
