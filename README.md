@@ -8,7 +8,7 @@
 
 You can see demo with CodeMirror (inside Web Browser) [demos/mongodb.html](https://github.com/angelozerr/tern-node-mongodb-native/blob/master/demos/mongodb.html) :
 
-![CodeMirror & TernNodeMongoDBNative](https://github.com/angelozerr/tern-node-express/wiki/images/CodeMirror_TernNodeMongoDBNativeCompletions.png)
+![CodeMirror & TernNodeMongoDBNative](https://github.com/angelozerr/tern-node-mongodb-native/wiki/images/CodeMirror_TernNodeMongoDBNativeCompletions.png)
 
 If you wish to use Eclipse as IDE, see https://github.com/angelozerr/tern.java
 
