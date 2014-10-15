@@ -102,13 +102,15 @@
          return 'fn(callback: fn(err: +Error, db: +db.Db))';
         case 'createCollection':
           return 'fn(collectionName: string, options?: +Object, callback: fn(err: +Error, collection: +collection.Collection)))';         
+        case 'collection':
+          return 'fn(collectionName: string, options?: +Object, callback: fn(err: +Error, collection: +collection.Collection)) -> +collection.Collection)))';          
         }        
       }
       break;
     }
   }
   
-  var getURL = function(moduleName, methodName) {
+  var getURL = function(moduleName, className, methodName) {
     var url = "http://mongodb.github.io/node-mongodb-native/api-generated/";
     url+=moduleName;
     url+=".html";

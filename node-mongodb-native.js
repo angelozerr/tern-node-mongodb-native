@@ -65,9 +65,8 @@
     "!doc": "\n\nAllows the user to access the admin functionality of MongoDB",
     "prototype": {
      "Admin": {
-      "!type": "fn(db: +Object) -> fn()",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/admin.html#Admin",
-      "!doc": "\n\nAllows the user to access the admin functionality of MongoDB"
+      "!type": "admin.Admin",
+      "!doc": "\n\n@ignore"
      },
      "buildInfo": {
       "!type": "fn(callback: fn())",
@@ -149,9 +148,8 @@
     "!doc": "\n\nCreate a new Collection instance (INTERNAL TYPE, do not instantiate directly)",
     "prototype": {
      "Collection": {
-      "!type": "fn(db: +Object, collectionName: string, pkFactory?: +Object, options?: +Object) -> +Object",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/collection.html#Collection",
-      "!doc": "\n\nCreate a new Collection instance (INTERNAL TYPE, do not instantiate directly)"
+      "!type": "collection.Collection",
+      "!doc": "\n\nExpose."
      },
      "insert": {
       "!type": "fn(docs: [?], options?: +Object, callback?: fn()) -> +collection.Collection",
@@ -404,7 +402,7 @@
       "!doc": "\n\nGet the list of all collection names for the specified db"
      },
      "collection": {
-      "!type": "fn(collectionName: string, options?: +Object, callback: fn())",
+      "!type": "fn(collectionName: string, options?: +Object, callback: fn(err: +Error, collection: +collection.Collection)) -> +collection.Collection)))",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/db.html#collection",
       "!doc": "\n\nFetch a specific collection (containing the actual collection information). If the application does not use strict mode you can\ncan use it without a callback in the following way. var collection = db.collection('mycollection');"
      },
@@ -505,6 +503,22 @@
       "!type": "fn(options?: ?, callback: fn())",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/db.html#stats",
       "!doc": "\n\nGet all the db statistics."
+     },
+     "_executeUpdateCommand": {
+      "!type": "?",
+      "!doc": "\n\nUpdate command is the same"
+     },
+     "_executeRemoveCommand": {
+      "!type": "?",
+      "!doc": "\n\nRemove command is the same"
+     },
+     "wrap": {
+      "!type": "?",
+      "!doc": "\n\nWrap a Mongo error document into an Error instance.\nDeprecated. Use utils.toError instead."
+     },
+     "connect": {
+      "!type": "?",
+      "!doc": "\n\nLegacy support"
      }
     },
     "connect": {
@@ -521,9 +535,8 @@
     "!doc": "\n\nConstructor for a cursor object that handles all the operations on query result\nusing find. This cursor object is unidirectional and cannot traverse backwards. Clients should not be creating a cursor directly,\nbut use find to acquire a cursor. (INTERNAL TYPE)",
     "prototype": {
      "Cursor": {
-      "!type": "fn(db: +db.Db, collection: +collection.Collection, selector: +Object, fields: +Object, options?: +Object)",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/cursor.html#Cursor",
-      "!doc": "\n\nConstructor for a cursor object that handles all the operations on query result\nusing find. This cursor object is unidirectional and cannot traverse backwards. Clients should not be creating a cursor directly,\nbut use find to acquire a cursor. (INTERNAL TYPE)"
+      "!type": "cursor.Cursor",
+      "!doc": "\n\n@ignore"
      },
      "rewind": {
       "!type": "fn() -> +cursor.Cursor",
@@ -644,9 +657,8 @@
     "!doc": "\n\nA class representation of a file stored in GridFS.",
     "prototype": {
      "GridStore": {
-      "!type": "fn(db: +db.Db, id?: ?, filename?: string, mode: string, options: +Object) -> +gridstore.GridStore",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/gridstore.html#GridStore",
-      "!doc": "\n\nA class representation of a file stored in GridFS."
+      "!type": "gridstore.GridStore",
+      "!doc": "\n\n@ignore"
      },
      "open": {
       "!type": "fn(callback: fn())",
@@ -722,6 +734,16 @@
       "!type": "fn(autoclose: bool)",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/gridstore.html#stream",
       "!doc": "\n\nReturns read stream based on this GridStore file"
+     },
+     "return number of bytes in the current chunkSize.": {
+      "!type": "?"
+     },
+     "return this files md5 checksum.": {
+      "!type": "?"
+     },
+     "setEncoding": {
+      "!type": "?",
+      "!doc": "\n\nHandles the correct setting of encoding for the stream\n @ignore"
      },
      "write": {
       "!type": "fn(data: string, close?: bool, callback: fn())",
@@ -831,14 +853,17 @@
     "!doc": "\n\nClass representing a single MongoDB Server connection",
     "prototype": {
      "Server": {
-      "!type": "fn(host: string, port: number, options?: +Object)",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/server.html#Server",
-      "!doc": "\n\nClass representing a single MongoDB Server connection"
+      "!type": "server.Server",
+      "!doc": "\n\n@ignore"
      },
      "setReadPreference": {
       "!type": "fn()",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/server.html#setReadPreference",
       "!doc": "\n\nAlways ourselves"
+     },
+     "canWrite": {
+      "!type": "?",
+      "!doc": "\n\n@ignore"
      },
      "assignReplicaSet": {
       "!type": "fn(replset: +replset.ReplSet)",
@@ -888,6 +913,14 @@
       "!type": "fn()",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/mongos.html#setReadPreference",
       "!doc": "\n\nAlways ourselves"
+     },
+     "canWrite": {
+      "!type": "?",
+      "!doc": "\n\n@ignore"
+     },
+     "canRead": {
+      "!type": "?",
+      "!doc": "\n\n@ignore"
      }
     }
    }
@@ -918,9 +951,12 @@
     "!doc": "\n\nA class representation of the Read Preference.",
     "prototype": {
      "ReadPreference": {
-      "!type": "fn(the: string, tags: +Object) -> +readpreference.ReadPreference",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/readpreference.html#ReadPreference",
-      "!doc": "\n\nA class representation of the Read Preference."
+      "!type": "readpreference.ReadPreference",
+      "!doc": "\n\n@ignore"
+     },
+     "PRIMARY": {
+      "!type": "?",
+      "!doc": "\n\n@ignore"
      }
     }
    }
@@ -1109,14 +1145,17 @@
     "!doc": "\n\nCreate a new ObjectID instance",
     "prototype": {
      "ObjectID": {
-      "!type": "fn(id: string) -> +Object",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#ObjectID",
-      "!doc": "\n\nCreate a new ObjectID instance"
+      "!type": "objectid.ObjectID",
+      "!doc": "\n\nExpose."
      },
      "toHexString": {
       "!type": "fn() -> string",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#toHexString",
       "!doc": "\n\nReturn the ObjectID id as a 24 byte hex string representation"
+     },
+     "inspect": {
+      "!type": "?",
+      "!doc": "\n\nConverts to a string representation of this Id."
      },
      "equals": {
       "!type": "fn(otherID: +Object) -> ?",
@@ -1127,6 +1166,10 @@
       "!type": "fn() -> ?",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/objectid.html#getTimestamp",
       "!doc": "\n\nReturns the generation date (accurate up to the second) that this ID was generated."
+     },
+     "index": {
+      "!type": "?",
+      "!doc": "\n\n@ignore"
      }
     },
     "createFromTime": {
@@ -1153,9 +1196,8 @@
     "!doc": "\n\nA class representation of the BSON Binary type.",
     "prototype": {
      "Binary": {
-      "!type": "fn(buffer: ?, subType?: number) -> +grid.Grid",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/binary.html#Binary",
-      "!doc": "\n\nA class representation of the BSON Binary type."
+      "!type": "binary.Binary",
+      "!doc": "\n\nExpose."
      },
      "put": {
       "!type": "fn(byte_value: ?)",
@@ -1286,9 +1328,16 @@
     "!doc": "\n\nDefines a Timestamp class for representing a 64-bit two's-complement\ninteger value, which faithfully simulates the behavior of a Java \"Timestamp\". This\nimplementation is derived from TimestampLib in GWT.",
     "prototype": {
      "Timestamp": {
-      "!type": "fn(low: number, high: number)",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#Timestamp",
-      "!doc": "\n\nDefines a Timestamp class for representing a 64-bit two's-complement\ninteger value, which faithfully simulates the behavior of a Java \"Timestamp\". This\nimplementation is derived from TimestampLib in GWT."
+      "!type": "timestamp.Timestamp",
+      "!doc": "\n\nExpose."
+     },
+     "low_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "high_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
      },
      "toInt": {
       "!type": "fn() -> number",
@@ -1444,6 +1493,58 @@
       "!type": "fn(numBits: number) -> +timestamp.Timestamp",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/timestamp.html#shiftRightUnsigned",
       "!doc": "\n\nReturns this Timestamp with bits shifted to the right by the given amount, with the new top bits matching the current sign bit."
+     },
+     "INT_CACHE_": {
+      "!type": "?",
+      "!doc": "\n\nA cache of the Timestamp representations of small integer values."
+     },
+     "TWO_PWR_16_DBL_": {
+      "!type": "?",
+      "!doc": "\n\nNumber used repeated below in calculations.  This must appear before the\nfirst call to any from* function below."
+     },
+     "TWO_PWR_24_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_32_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_31_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_48_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_64_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_63_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "ZERO": {
+      "!type": "?",
+      "!doc": "\n\n@type {Timestamp}"
+     },
+     "ONE": {
+      "!type": "?",
+      "!doc": "\n\n@type {Timestamp}"
+     },
+     "NEG_ONE": {
+      "!type": "?",
+      "!doc": "\n\n@type {Timestamp}"
+     },
+     "MIN_VALUE": {
+      "!type": "?",
+      "!doc": "\n\n@type {Timestamp}"
+     },
+     "TWO_PWR_24_": {
+      "!type": "?",
+      "!doc": "\n\n@type {Timestamp}"
      }
     },
     "fromInt": {
@@ -1475,9 +1576,16 @@
     "!doc": "\n\nDefines a Long class for representing a 64-bit two's-complement\ninteger value, which faithfully simulates the behavior of a Java \"Long\". This\nimplementation is derived from LongLib in GWT.",
     "prototype": {
      "Long": {
-      "!type": "fn(low: number, high: number)",
-      "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#Long",
-      "!doc": "\n\nDefines a Long class for representing a 64-bit two's-complement\ninteger value, which faithfully simulates the behavior of a Java \"Long\". This\nimplementation is derived from LongLib in GWT."
+      "!type": "long.Long",
+      "!doc": "\n\nExpose."
+     },
+     "low_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "high_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
      },
      "toInt": {
       "!type": "fn() -> number",
@@ -1633,6 +1741,58 @@
       "!type": "fn(numBits: number) -> +long.Long",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/long.html#shiftRightUnsigned",
       "!doc": "\n\nReturns this Long with bits shifted to the right by the given amount, with the new top bits matching the current sign bit."
+     },
+     "INT_CACHE_": {
+      "!type": "?",
+      "!doc": "\n\nA cache of the Long representations of small integer values."
+     },
+     "TWO_PWR_16_DBL_": {
+      "!type": "?",
+      "!doc": "\n\nNumber used repeated below in calculations.  This must appear before the\nfirst call to any from* function below."
+     },
+     "TWO_PWR_24_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_32_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_31_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_48_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_64_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "TWO_PWR_63_DBL_": {
+      "!type": "?",
+      "!doc": "\n\n@type {number}"
+     },
+     "ZERO": {
+      "!type": "?",
+      "!doc": "\n\n@type {Long}"
+     },
+     "ONE": {
+      "!type": "?",
+      "!doc": "\n\n@type {Long}"
+     },
+     "NEG_ONE": {
+      "!type": "?",
+      "!doc": "\n\n@type {Long}"
+     },
+     "MIN_VALUE": {
+      "!type": "?",
+      "!doc": "\n\n@type {Long}"
+     },
+     "TWO_PWR_24_": {
+      "!type": "?",
+      "!doc": "\n\n@type {Long}"
      }
     },
     "fromInt": {
@@ -1692,6 +1852,10 @@
       "!type": "fn(object: +Object, checkKeys: bool, buffer: ?, index: number, serializeFunctions: bool) -> number",
       "!url": "http://mongodb.github.io/node-mongodb-native/api-generated/bson.html#serializeWithBufferAndIndex",
       "!doc": "\n\nSerialize a Javascript object using a predefined Buffer and index into the buffer, useful when pre-allocating the space for serialization."
+     },
+     "Code": {
+      "!type": "code.Code",
+      "!doc": "\n\n@ignore"
      }
     },
     "calculateObjectSize": {

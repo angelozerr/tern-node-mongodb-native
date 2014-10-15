@@ -9,18 +9,18 @@
     this.options = options;
   };
   
-  Generator.prototype.process = function(api) {
+  Generator.prototype.process = function(dataObjects) {
     var ternDef = {
       "!name" : this.options.name,
       "!define" : {}
     };
     this.options.initialize(ternDef);
-    this.visitDataObjects(api, ternDef);
+    this.moduleInfos = createModuleInfos(dataObjects, this.options);
+    this.visitDataObjects(dataObjects, ternDef);
     return ternDef;
   };
 
-  Generator.prototype.visitDataObjects = function(dataObjects, ternDef) {
-    var moduleInfos = this.createModuleInfos(dataObjects);
+  Generator.prototype.visitDataObjects = function(dataObjects, ternDef) {    
     // Iterate over all classes
     var modulesNames = Object.keys(dataObjects);    
     // For each class generate output
@@ -28,12 +28,12 @@
       var moduleName = modulesNames[i];
       // The meta data object
       var moduleMetaData = dataObjects[moduleName], ternModule = {};
-      this.visitModuleMetaData(moduleInfos, moduleMetaData, moduleName.replace(/\//g, '_'), ternModule);
+      this.visitModuleMetaData(moduleMetaData, moduleName.replace(/\//g, '_'), ternModule);
       ternDef["!define"][moduleName.replace(/\//g, '_')] = ternModule;
     }
   }
     
-  Generator.prototype.createModuleInfos = function(dataObjects) {
+  var createModuleInfos = function(dataObjects, options) {
     var infos = {};
     // Iterate over all classes
     var moduleNames = Object.keys(dataObjects);    
@@ -44,7 +44,7 @@
       var entries = dataObjects[moduleName];
       for(var j = 0; j < entries.length; j++) {
         var entry = entries[j];
-        if(isClass(entry, this.options)) {
+        if(isClass(entry, options)) {
           var className = entry.ctx.string.replace("()", "");
           infos[className] = moduleName.replace(/\//g, '_') + '.' + className;
         }
@@ -53,93 +53,90 @@
     return infos;
   }
   
-  Generator.prototype.visitModuleMetaData = function(moduleInfos, entries, moduleName, ternModule) {
+  Generator.prototype.visitModuleMetaData = function(entries, moduleName, ternModule) {
       var options = this.options;
       for(var i = 0; i < entries.length; i++) {
         var entry = entries[i];
         if(isClass(entry, options)) {
           var className = entry.ctx.string.replace("()", ""), ternClass = {};
           // !type
-          ternClass["!type"] = getTernClassType(moduleInfos, entry, moduleName, className, null, false, options);
+          var type = this.getTernClassType(entry, moduleName, className, null, false);
           // !url
-          if (options.getURL) {
-            var url = options.getURL(moduleName); 
-            if (url) ternClass["!url"] = url;
-          }
+          var url = options.getURL ? options.getURL(moduleName, className, null) : null;
           // !doc
-          var fullDescription = getFullDescription(entry);
-          if (fullDescription != '') ternClass["!doc"] = fullDescription;  
+          var doc = getFullDescription(entry);          
+          ternClass = createTernDefItem(ternModule, className, type, null, url, doc);
           
           // loop for entries
           for(var i = 0; i < entries.length; i++) {
             var entry = entries[i];
             if(isFunction(entry)) {
-              this.visitFunction(moduleInfos, entry, moduleName, className, ternClass);
+              this.visitFunction(entry, moduleName, className, ternClass);
             } else if(isClassConstant(entry)) {
               this.visitClassConstant (entry, ternClass);
+            } else {
+              var property = getProperty(entry, options);              
+              if (property) {
+                var ternPrototype = this.getTernClassPrototype(ternClass, moduleName, className);
+                this.visitProperty (property, ternPrototype);
+              }
             }
           }
-          ternModule[className] = ternClass;
         }
       }
     }
 
-    Generator.prototype.visitFunction = function(moduleInfos, entry, moduleName, className, ternClass) {
+    Generator.prototype.visitFunction = function(entry, moduleName, className, ternClass) {
       var options = this.options;
       var methodName = entry.ctx.name, staticMethod = isStaticMethod(entry);
       var ternMethod = {};
       // !type
-      ternMethod["!type"] = getTernClassType(moduleInfos, entry, moduleName, className, methodName, staticMethod, options);
+      var type = this.getTernClassType(entry, moduleName, className, methodName, staticMethod);
       // !effect
-      var ternEffects = getTernEffects(moduleName, className, methodName, staticMethod, options);
-      if (ternEffects) ternMethod["!effects"] = ternEffects;
+      var effects = this.getTernEffects(moduleName, className, methodName, staticMethod);      
       // !url
-      if (options.getURL) {
-        var url = options.getURL(moduleName, methodName); 
-        if (url) ternMethod["!url"] = url;
-      }
+      var url = options.getURL ? options.getURL(moduleName, className, methodName) : null;
       // !doc
-      var fullDescription = getFullDescription(entry);
-      if (fullDescription != '') ternMethod["!doc"] = fullDescription;
+      var doc = getFullDescription(entry);
       var ternClassOrPrototype = ternClass;
       if (!staticMethod) {
-        ternClassOrPrototype = getTernClassPrototype(ternClass, moduleName, className, options);
+        ternClassOrPrototype = this.getTernClassPrototype(ternClass, moduleName, className);
       }
-      ternClassOrPrototype[methodName] = ternMethod;
+      createTernDefItem(ternClassOrPrototype, methodName, type, effects, url, doc);
     }
 
-    Generator.prototype.visitProperties = function(moduleInfos, entries, moduleName, className, ternClass) {
-      var options = this.options;
-      for(var i = 0; i < entries.length; i++) {
-        var entry = entries[i];
-        if(isProperty(entry, options)) {
-          var methodName = entry.ctx.name, staticMethod = isStaticMethod(entry);
-          var ternMethod = {};
-          // !type
-          ternMethod["!type"] = getTernClassType(moduleInfos, entry, moduleName, className, methodName, staticMethod, options);
-          // !effect
-          var ternEffects = getTernEffects(moduleName, className, methodName, staticMethod, options);
-          if (ternEffects) ternMethod["!effects"] = ternEffects;
-          // !url
-          if (options.baseURL) ternMethod["!url"] = options.baseURL + moduleName + '.html#' + methodName;
-          // !doc
-          var fullDescription = getFullDescription(entry);
-          if (fullDescription != '') ternMethod["!doc"] = fullDescription;
-          var ternClassOrPrototype = ternClass;
-          if (!staticMethod) {
-            ternClassOrPrototype = getTernClassPrototype(ternClass, moduleName, className, options);
-          }
-          ternClassOrPrototype[methodName] = ternMethod
-        }
+    Generator.prototype.visitProperty = function(property, ternClass) {
+      var name = null, type = "?", effects = null, url = null, doc = null;
+      if (property.ctx) {
+        name = property.ctx.name;
+        // !type
+        var info = this.moduleInfos[name];
+        if (info) type = info;
+        // !doc
+        doc = getFullDescription(property);
+      } else {
+        name = property.string;
+      }
+      if (name) {
+        createTernDefItem(ternClass, name, type, effects, url, doc);
       }
     }
 
+    var createTernDefItem = function(parent, name, type, effects, url, doc) {
+      var item = parent[name] = {};
+      if (type) item["!type"] = type;
+      if (effects) item["!effects"] = effects;
+      if (url) item["!url"] = url;
+      if (doc && doc != '') item["!doc"] = doc;
+      return item;
+    }
+    
     Generator.prototype.visitClassConstant = function(entry, ternClass) {
 
     }
     
-    function getTernClassPrototype(ternClass, moduleName, className, options) {
-      var ternPrototype = ternClass["prototype"];
+    Generator.prototype.getTernClassPrototype = function(ternClass, moduleName, className) {
+      var ternPrototype = ternClass["prototype"], options = this.options;
       if (!ternPrototype) {
         ternPrototype = {};
         ternClass["prototype"] = ternPrototype;
@@ -151,8 +148,40 @@
       return ternPrototype;
     }
     
-    function getTernEffects(moduleName, className, methodName, staticMethod, options) {
+    Generator.prototype.getTernEffects = function(moduleName, className, methodName, staticMethod) {
+      var options = this.options;
       if (options.getEffects) return options.getEffects(moduleName, className, methodName);
+    }
+    
+    Generator.prototype.getTernClassType = function(entry, moduleName, className, methodName, staticMethod) {
+      var options = this.options, moduleInfos = this.moduleInfos;
+      var t = options.getType ? options.getType(moduleName, className, methodName, staticMethod) : null;
+      if (t) return t;
+      var type = 'fn(', tags = entry.tags, nbParams = 0, returnType = null;
+      for(var k = 0; k < tags.length; k++) {
+        var tag = tags[k];
+        if(tag.type == 'param') {
+          if (nbParams) type+= ', ';
+          var isOptional = tag.name.charAt(0) == '[', name = (isOptional ? tag.name.substring(1, tag.name.length - 1) : tag.name);
+          var index = name.indexOf('(');
+          if (index != -1) name = name.substring(0, index);
+          index = name.indexOf('.');
+          if (index != -1) name = name.substring(0, index);
+          type+= name;
+          if (isOptional) type+='?';
+          type+=': ';
+          type+=getTernType(tag, moduleInfos);
+          nbParams++;
+        } else if(tag.type == 'return') {
+          returnType = getTernType(tag, moduleInfos);
+        }
+      }
+      type+= ')';
+      if (returnType) {
+        type+=' -> ';
+        type+=returnType;
+      }
+      return type;
     }
     
     //Helper methods used in the rendering
@@ -183,13 +212,18 @@
              && entry.ctx.receiver != "this";
     }
     
-    var isProperty = function(entry, options) {
+    var getProperty = function(entry, options) {
       if (options.isProperty) return options.isProperty(entry);
+      if (entry.ctx && entry.ignore != true && entry.ctx.type == 'property') {
+        return entry;
+      }
       var tags = entry.tags;    
       for(var k = 0; k < tags.length; k++) {
-        if(tags[k].type == 'property') return true;
+        var tag = tags[k];
+        if (tag.visibility == false) return null;
+        if(tag.type == 'property') return tag;
       }    
-      return false;    
+      return null;    
     }
     
     var isClassConstant = function(entry) {
@@ -213,36 +247,6 @@
         .replace(/\<em\>|\<\/em\>/g, "*")
         .replace(/\<br[ ]*\>|\<\/br[ ]*\>|\<br[ ]*\/\>/g, "\n");
       return fullDescription;
-    }
-    
-    var getTernClassType = function(moduleInfos, entry, moduleName, className, methodName, staticMethod, options) {
-      var t = options.getType ? options.getType(moduleName, className, methodName, staticMethod) : null;
-      if (t) return t;
-      var type = 'fn(', tags = entry.tags, nbParams = 0, returnType = null;
-      for(var k = 0; k < tags.length; k++) {
-        var tag = tags[k];
-        if(tag.type == 'param') {
-          if (nbParams) type+= ', ';
-          var isOptional = tag.name.charAt(0) == '[', name = (isOptional ? tag.name.substring(1, tag.name.length - 1) : tag.name);
-          var index = name.indexOf('(');
-          if (index != -1) name = name.substring(0, index);
-          index = name.indexOf('.');
-          if (index != -1) name = name.substring(0, index);
-          type+= name;
-          if (isOptional) type+='?';
-          type+=': ';
-          type+=getTernType(tag, moduleInfos);
-          nbParams++;
-        } else if(tag.type == 'return') {
-          returnType = getTernType(tag, moduleInfos);
-        }
-      }
-      type+= ')';
-      if (returnType) {
-        type+=' -> ';
-        type+=returnType;
-      }
-      return type;
     }
     
     var getTernType = function(tag, moduleInfos) {
