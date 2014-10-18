@@ -10,7 +10,7 @@ You can see demo with CodeMirror (inside Web Browser) [demos/mongodb.html](https
 
 ![CodeMirror & TernNodeMongoDBNative](https://github.com/angelozerr/tern-node-mongodb-native/wiki/images/CodeMirror_TernNodeMongoDBNativeCompletions.png)
 
-If you wish to use Eclipse as IDE, see https://github.com/angelozerr/tern.java
+If you wish to use Eclipse as IDE, see Eclipse support for [Node MongoDB Native](https://github.com/angelozerr/tern.java/wiki/Tern-&-Node-MongoDB-Native-support).
 
 ## Installation
 
