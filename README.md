@@ -1,6 +1,7 @@
 # tern-node-mongodb-native
 
 [![Build Status](https://secure.travis-ci.org/angelozerr/tern-node-mongodb-native.png)](http://travis-ci.org/angelozerr/tern-node-mongodb-native)
+[![npm version](https://badge.fury.io/js/tern-node-mongodb-native.svg)](http://badge.fury.io/js/tern-node-mongodb-native)
 
 [tern-node-mongodb-native](https://github.com/angelozerr/tern-node-mongodb-native) is a plugin which adds support for [Mongo DB Native NodeJS Driver](http://mongodb.github.io/node-mongodb-native/) to the JavaScript code intelligence system [Tern](http://ternjs.net/).
 
